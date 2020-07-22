@@ -84,9 +84,9 @@ createWriteStatement selectQuery mutateQuery wantSingle isInsert asCsv rep pKeys
   decodeStandard =
    fromMaybe (Nothing, 0, [], mempty, Right [], Right Nothing) <$> HD.rowMaybe standardRow
 
-createReadStatement :: SqlQuery -> SqlQuery -> Bool -> Bool -> Bool -> Maybe FieldName -> PgVersion ->
+createReadStatement :: SqlQuery -> SqlQuery -> Bool -> Bool -> Bool -> Bool -> Maybe FieldName -> PgVersion ->
                        H.Statement () ResultsWithCount
-createReadStatement selectQuery countQuery isSingle countTotal asCsv binaryField pgVer =
+createReadStatement selectQuery countQuery isSingle countTotal asCsv asGeoJson binaryField pgVer =
   unicodeStatement sql HE.noParams decodeStandard False
  where
   sql = [qc|
@@ -106,6 +106,7 @@ createReadStatement selectQuery countQuery isSingle countTotal asCsv binaryField
 
   bodyF
     | asCsv = asCsvF
+    | asGeoJson = asGeoJsonF
     | isSingle = asJsonSingleF
     | isJust binaryField = asBinaryF $ fromJust binaryField
     | otherwise = asJsonF

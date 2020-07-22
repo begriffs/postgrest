@@ -610,3 +610,8 @@ INSERT INTO v2.parents VALUES(3, 'parent v2-3'), (4, 'parent v2-4');
 
 TRUNCATE TABLE v2.another_table CASCADE;
 INSERT INTO v2.another_table VALUES(5, 'value 5'), (6, 'value 6');
+
+TRUNCATE TABLE shops CASCADE;
+INSERT INTO shops(id, address, shop_geom) VALUES(1, '1369 Cambridge St', '0101000020E610000075CDE49B6DC651C0E0D6DD3CD52F4540');
+INSERT INTO shops(id, address, shop_geom) VALUES(2, '757 Massachusetts Ave', '0101000020E61000001B81785DBFC651C09C1A683EE72E4540');
+INSERT INTO shops(id, address, shop_geom) VALUES(3, '605 W Kendall St', '0101000020E61000007B30293E3EC551C05FD218ADA32E4540');

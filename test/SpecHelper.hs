@@ -16,6 +16,15 @@ import System.Environment   (getEnv)
 import System.Process       (readProcess)
 import Text.Regex.TDFA      ((=~))
 
+import           Control.Lens               ((^?))
+import qualified Data.Aeson.Lens            as L
+import qualified Hasql.Decoders             as HD
+import qualified Hasql.Encoders             as HE
+import qualified Hasql.Pool                 as P
+import qualified Hasql.Session              as H
+import qualified Hasql.Statement            as H
+import qualified Hasql.Transaction          as HT
+import qualified Hasql.Transaction.Sessions as HT
 
 import Network.HTTP.Types
 import Test.Hspec
@@ -24,7 +33,7 @@ import Text.Heredoc
 
 import PostgREST.Auth   (parseSecret)
 import PostgREST.Config (AppConfig (..))
-import PostgREST.Types  (JSPathExp (..))
+import PostgREST.Types  (JSPathExp (..), SqlQuery)
 import Protolude        hiding (toS)
 import Protolude.Conv   (toS)
 
@@ -145,6 +154,9 @@ testNonexistentSchemaCfg testDbConn = (testCfg testDbConn) { configSchemas = fro
 testCfgExtraSearchPath :: Text -> AppConfig
 testCfgExtraSearchPath testDbConn = (testCfg testDbConn) { configExtraSearchPath = ["public", "extensions"] }
 
+testCfgPostGIS :: Text -> AppConfig
+testCfgPostGIS testDbConn = (testCfg testDbConn) { configExtraSearchPath = ["extensions"] }
+
 testCfgRootSpec :: Text -> AppConfig
 testCfgRootSpec testDbConn = (testCfg testDbConn) { configRootSpec = Just "root"}
 
@@ -212,3 +224,25 @@ isErrorFormat s =
   obj = decode s :: Maybe (M.Map Text Value)
   keys = maybe S.empty M.keysSet obj
   validKeys = S.fromList ["message", "details", "hint", "code"]
+
+exec :: P.Pool -> ByteString -> SqlQuery -> IO (Maybe Int64)
+exec pool input query =
+  join . rightToMaybe <$>
+  P.use pool (HT.transaction HT.ReadCommitted HT.Read $ HT.statement input $ explainCost query)
+
+explainCost :: SqlQuery -> H.Statement ByteString (Maybe Int64)
+explainCost query =
+  H.Statement (encodeUtf8 sql) (HE.param $ HE.nonNullable HE.unknown) decodeExplain False
+ where
+   sql = "EXPLAIN (FORMAT JSON) " <> query
+   decodeExplain :: HD.Result (Maybe Int64)
+   decodeExplain =
+     let row = HD.singleRow $ HD.column $ HD.nonNullable HD.bytea in
+     (^? L.nth 0 . L.key "Plan" .  L.key "Total Cost" . L._Integral) <$> row
+
+supportPostGIS :: H.Session Bool
+supportPostGIS = H.statement () $ H.Statement sql HE.noParams decodeRow False
+  where
+    sql = "SELECT extversion >= " <> minimumPostGIS <> " FROM pg_catalog.pg_extension WHERE extname = 'postgis'"
+    decodeRow = fromMaybe False <$> (HD.rowMaybe $ HD.column $ HD.nonNullable HD.bool)
+    minimumPostGIS = "'3.0.0'"

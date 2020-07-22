@@ -135,7 +135,7 @@ app dbStructure proc cols conf apiRequest =
                              then limitedQuery cq ((+ 1) <$> maxRows) -- LIMIT maxRows + 1 so we can determine below that maxRows was surpassed
                              else cq
                   stm = createReadStatement q cQuery (contentType == CTSingularJSON) shouldCount
-                        (contentType == CTTextCSV) bField pgVer
+                        (contentType == CTTextCSV) (contentType == CTGeoJSON) bField pgVer
                   explStm = createExplainStatement cq
               row <- H.statement () stm
               let (tableTotal, queryTotal, _ , body, gucHeaders, gucStatus) = row
@@ -380,7 +380,7 @@ responseContentTypeOrError :: [ContentType] -> [ContentType] -> Action -> Target
 responseContentTypeOrError accepts rawContentTypes action target = serves contentTypesForRequest accepts
   where
     contentTypesForRequest = case action of
-      ActionRead _       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
+      ActionRead _       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
                              ++ rawContentTypes
       ActionCreate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
       ActionUpdate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]

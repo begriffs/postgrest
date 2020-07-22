@@ -36,6 +36,7 @@ import qualified Feature.JsonOperatorSpec
 import qualified Feature.MultipleSchemaSpec
 import qualified Feature.NoJwtSpec
 import qualified Feature.NonexistentSchemaSpec
+import qualified Feature.PostGISSpec
 import qualified Feature.PgVersion95Spec
 import qualified Feature.PgVersion96Spec
 import qualified Feature.ProxySpec
@@ -60,6 +61,8 @@ main = do
   pool <- P.acquire (3, 10, toS testDbConn)
 
   actualPgVersion <- either (panic.show) id <$> P.use pool getPgVersion
+
+  runPostGISTests <- either (panic.show) id <$> P.use pool supportPostGIS
 
   refDbStructure <- (newIORef . Just) =<< setupDbStructure pool (configSchemas $ testCfg testDbConn) actualPgVersion
 
@@ -87,6 +90,7 @@ main = do
       rootSpecApp          = app testCfgRootSpec
       htmlRawOutputApp     = app testCfgHtmlRawOutput
       responseHeadersApp   = app testCfgResponseHeaders
+      postGISApp           = app testCfgPostGIS
 
       unicodeApp           = appDbs testUnicodeCfg
       nonexistentSchemaApp = appDbs testNonexistentSchemaCfg
@@ -185,6 +189,11 @@ main = do
     -- this test runs with multiple schemas
     before multipleSchemaApp $
       describe "Feature.MultipleSchemaSpec" $ Feature.MultipleSchemaSpec.spec actualPgVersion
+
+    when runPostGISTests $
+    -- runs with an extra search path(to find PostGIS functions)
+      before postGISApp $
+        describe "Feature.PostGISSpec" Feature.PostGISSpec.spec
 
   where
     setupDbStructure pool schemas ver =

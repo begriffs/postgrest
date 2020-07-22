@@ -1777,3 +1777,11 @@ create function v2.get_parents_below(id int)
 returns setof v2.parents as $$
   select * from v2.parents where id < $1;
 $$ language sql;
+
+create extension if not exists postgis with schema extensions;
+
+create table shops (
+  id   int primary key
+, address text
+, shop_geom extensions.geometry(POINT, 4326)
+);
