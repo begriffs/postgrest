@@ -31,7 +31,7 @@ jobs:
       - image: circleci/buildpack-deps:trusty
         environment:
           - PGHOST=localhost
-      - image: circleci/postgres:9.4
+      - image: circleci/postgres:9.4-postgis
         environment:
           - POSTGRES_USER=circleci
           - POSTGRES_DB=circleci
@@ -85,7 +85,7 @@ jobs:
         environment:
           - PGHOST=localhost
           - TERM=xterm
-      - image: circleci/postgres:12
+      - image: circleci/postgres:12-postgis
         environment:
           - POSTGRES_USER=circleci
           - POSTGRES_DB=circleci
