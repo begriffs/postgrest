@@ -24,14 +24,13 @@ jobs:
             # `nix`, run `nix-shell --run postgrest-style`
             postgrest-style-check
 
-  # Run tests based on stack and docker against the oldest PostgreSQL version
-  # that we support.
+  # Run tests based on stack and docker against the newest PostgreSQL version.
   stack-test:
     docker:
       - image: circleci/buildpack-deps:trusty
         environment:
           - PGHOST=localhost
-      - image: circleci/postgres:9.4-postgis
+      - image: circleci/postgres:12-postgis
         environment:
           - POSTGRES_USER=circleci
           - POSTGRES_DB=circleci
