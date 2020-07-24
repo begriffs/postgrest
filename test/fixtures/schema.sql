@@ -1792,3 +1792,7 @@ create table shop_beacons (
 , coords  extensions.geometry(POINT, 4326)
 , shop_id int references shops(id)
 );
+
+create function get_shop(id int) returns shops as $$
+  select * from shops where id = $1;
+$$ language sql;

@@ -130,9 +130,9 @@ standardRow = (,,,,,) <$> nullableColumn HD.int8 <*> column HD.int8
 type ProcResults = (Maybe Int64, Int64, ByteString, Either SimpleError [GucHeader], Either SimpleError (Maybe Status))
 
 callProcStatement :: Bool -> SqlQuery -> SqlQuery -> SqlQuery -> Bool ->
-                     Bool -> Bool -> Bool -> Bool -> Maybe FieldName -> PgVersion ->
+                     Bool -> Bool -> Bool -> Bool -> Bool -> Maybe FieldName -> PgVersion ->
                      H.Statement ByteString ProcResults
-callProcStatement returnsScalar callProcQuery selectQuery countQuery countTotal isSingle asCsv asBinary multObjects binaryField pgVer =
+callProcStatement returnsScalar callProcQuery selectQuery countQuery countTotal isSingle asCsv asGeoJson asBinary multObjects binaryField pgVer =
   unicodeStatement sql (param HE.unknown) decodeProc True
   where
     sql = [qc|
@@ -151,6 +151,7 @@ callProcStatement returnsScalar callProcQuery selectQuery countQuery countTotal 
     bodyF
      | returnsScalar = scalarBodyF
      | isSingle     = asJsonSingleF
+     | asGeoJson = asGeoJsonF
      | asCsv = asCsvF
      | isJust binaryField = asBinaryF $ fromJust binaryField
      | otherwise = asJsonF

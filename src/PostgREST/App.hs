@@ -303,7 +303,7 @@ app dbStructure proc cols conf apiRequest =
                 preferParams = iPreferParameters apiRequest
                 pq = requestToCallProcQuery qi (specifiedProcArgs cols proc) returnsScalar preferParams returning
                 stm = callProcStatement returnsScalar pq q cq shouldCount (contentType == CTSingularJSON)
-                        (contentType == CTTextCSV) (contentType `elem` rawContentTypes) (preferParams == Just MultipleObjects)
+                        (contentType == CTTextCSV) (contentType == CTGeoJSON) (contentType `elem` rawContentTypes) (preferParams == Just MultipleObjects)
                         bField pgVer
               row <- H.statement (toS $ pjRaw pJson) stm
               let (tableTotal, queryTotal, body, gucHeaders, gucStatus) = row
@@ -385,7 +385,7 @@ responseContentTypeOrError accepts rawContentTypes action target = serves conten
       ActionCreate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
       ActionUpdate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
       ActionDelete       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
-      ActionInvoke _     ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
+      ActionInvoke _     ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
                              ++ rawContentTypes
                              ++ [CTOpenAPI | tpIsRootSpec target]
       ActionInspect _    ->  [CTOpenAPI, CTApplicationJSON]

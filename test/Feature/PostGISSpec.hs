@@ -71,3 +71,14 @@ spec = describe "PostGIS features" $
           ]
         }|]
         { matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"] }
+
+    it "works with RPC" $
+      request methodGet "/rpc/get_shop?id=1"
+        [("Accept", "application/geo+json")] "" `shouldRespondWith`
+        [json|{
+          "type" : "Featurecollection",
+          "features" : [
+            {"type": "Feature", "geometry": {"type":"Point","coordinates":[-71.10044,42.373695]}, "properties": {"id": 1, "address": "1369 Cambridge St"} }
+          ]
+        }|]
+        { matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"] }
