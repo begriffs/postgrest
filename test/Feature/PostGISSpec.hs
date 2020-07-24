@@ -51,3 +51,23 @@ spec = describe "PostGIS features" $
             {"type": "Feature", "geometry": {"type":"Point","coordinates":[-71.10044,42.373695]}, "properties": {"id": 1}}
           ] }|]
         { matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"] }
+
+    it "works with resource embedding" $
+      request methodGet "/shops?select=*,shop_beacons(*)&id=eq.1"
+        [("Accept", "application/geo+json")] "" `shouldRespondWith`
+        [json|{
+          "type" : "Featurecollection",
+          "features" : [
+            {"type": "Feature",
+             "geometry": {"type":"Point","coordinates":[-71.10044,42.373695]},
+             "properties": {
+              "id": 1, "address": "1369 Cambridge St",
+              "shop_beacons": [
+                {"id":1,"name":"Beacon-1","coords":{"type":"Point","coordinates":[-71.10044,42.373695]},"shop_id":1},
+                {"id":2,"name":"Beacon-2","coords":{"type":"Point","coordinates":[-71.10044,42.373695]},"shop_id":1}
+              ]
+              }
+            }
+          ]
+        }|]
+        { matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"] }

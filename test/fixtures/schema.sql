@@ -1781,7 +1781,14 @@ $$ language sql;
 create extension if not exists postgis with schema extensions;
 
 create table shops (
-  id   int primary key
-, address text
+  id        int primary key
+, address   text
 , shop_geom extensions.geometry(POINT, 4326)
+);
+
+create table shop_beacons (
+  id      int primary key
+, name    text
+, coords  extensions.geometry(POINT, 4326)
+, shop_id int references shops(id)
 );
