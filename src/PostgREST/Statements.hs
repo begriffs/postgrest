@@ -42,10 +42,10 @@ import           Text.InterpolatedString.Perl6   (qc)
 -}
 type ResultsWithCount = (Maybe Int64, Int64, [BS.ByteString], BS.ByteString, Either SimpleError [GucHeader], Either SimpleError (Maybe Status))
 
-createWriteStatement :: SqlQuery -> SqlQuery -> Bool -> Bool -> Bool ->
+createWriteStatement :: SqlQuery -> SqlQuery -> Bool -> Bool -> Bool -> Bool ->
                         PreferRepresentation -> [Text] -> PgVersion ->
                         H.Statement ByteString ResultsWithCount
-createWriteStatement selectQuery mutateQuery wantSingle isInsert asCsv rep pKeys pgVer =
+createWriteStatement selectQuery mutateQuery wantSingle isInsert asCsv asGeoJson rep pKeys pgVer =
   unicodeStatement sql (param HE.unknown) decodeStandard True
  where
   sql = [qc|
@@ -72,6 +72,7 @@ createWriteStatement selectQuery mutateQuery wantSingle isInsert asCsv rep pKeys
   bodyF
     | rep `elem` [None, HeadersOnly] = "''"
     | asCsv = asCsvF
+    | asGeoJson = asGeoJsonF
     | wantSingle = asJsonSingleF
     | otherwise = asJsonF
 

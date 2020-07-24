@@ -168,7 +168,7 @@ app dbStructure proc cols conf apiRequest =
               let pkCols = tablePKCols dbStructure tSchema tName
                   stm = createWriteStatement sq mq
                     (contentType == CTSingularJSON) True
-                    (contentType == CTTextCSV) (iPreferRepresentation apiRequest) pkCols pgVer
+                    (contentType == CTTextCSV) (contentType == CTGeoJSON) (iPreferRepresentation apiRequest) pkCols pgVer
               row <- H.statement (toS $ pjRaw pJson) stm
               let (_, queryTotal, fields, body, gucHeaders, gucStatus) = row
                   gucs =  (,) <$> gucHeaders <*> gucStatus
@@ -201,7 +201,7 @@ app dbStructure proc cols conf apiRequest =
             Left errorResponse -> return errorResponse
             Right (sq, mq) -> do
               let stm = createWriteStatement sq mq
-                    (contentType == CTSingularJSON) False (contentType == CTTextCSV)
+                    (contentType == CTSingularJSON) False (contentType == CTTextCSV) (contentType == CTGeoJSON)
                     (iPreferRepresentation apiRequest) [] pgVer
               row <- H.statement (toS $ pjRaw pJson) stm
               let (_, queryTotal, _, body, gucHeaders, gucStatus) = row
@@ -236,7 +236,7 @@ app dbStructure proc cols conf apiRequest =
               else do
                 row <- H.statement (toS $ pjRaw pJson) $
                        createWriteStatement sq mq (contentType == CTSingularJSON) False
-                                            (contentType == CTTextCSV) (iPreferRepresentation apiRequest) [] pgVer
+                                            (contentType == CTTextCSV) (contentType == CTGeoJSON) (iPreferRepresentation apiRequest) [] pgVer
                 let (_, queryTotal, _, body, gucHeaders, gucStatus) = row
                     gucs =  (,) <$> gucHeaders <*> gucStatus
                 case gucs of
@@ -261,7 +261,7 @@ app dbStructure proc cols conf apiRequest =
             Right (sq, mq) -> do
               let stm = createWriteStatement sq mq
                     (contentType == CTSingularJSON) False
-                    (contentType == CTTextCSV)
+                    (contentType == CTTextCSV) (contentType == CTGeoJSON)
                     (iPreferRepresentation apiRequest) [] pgVer
               row <- H.statement mempty stm
               let (_, queryTotal, _, body, gucHeaders, gucStatus) = row
@@ -382,7 +382,7 @@ responseContentTypeOrError accepts rawContentTypes action target = serves conten
     contentTypesForRequest = case action of
       ActionRead _       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
                              ++ rawContentTypes
-      ActionCreate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
+      ActionCreate       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
       ActionUpdate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
       ActionDelete       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
       ActionInvoke _     ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]

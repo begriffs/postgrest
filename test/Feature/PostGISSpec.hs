@@ -82,3 +82,22 @@ spec = describe "PostGIS features" $
           ]
         }|]
         { matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"] }
+
+    it "works with Prefer: return=representation after POST" $
+      request methodPost "/shops"
+        [("Accept", "application/geo+json"), ("Prefer", "return=representation")] [json|
+          {"id": 4, "address": "1354 Massachusetts Ave", "shop_geom": "SRID=4326;POINT(-71.11834 42.373238)"}
+        |] `shouldRespondWith`
+        [json|{
+          "type": "Featurecollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": { "coordinates": [ -71.11834, 42.373238 ], "type": "Point" },
+              "properties": { "address": "1354 Massachusetts Ave", "id": 4 }
+            }
+          ]
+        }|]
+        { matchStatus  = 201
+        , matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"]
+        }
