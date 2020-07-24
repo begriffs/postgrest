@@ -384,7 +384,7 @@ responseContentTypeOrError accepts rawContentTypes action target = serves conten
                              ++ rawContentTypes
       ActionCreate       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
       ActionUpdate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
-      ActionDelete       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
+      ActionDelete       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
       ActionInvoke _     ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
                              ++ rawContentTypes
                              ++ [CTOpenAPI | tpIsRootSpec target]

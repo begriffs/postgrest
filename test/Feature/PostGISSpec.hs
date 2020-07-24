@@ -101,3 +101,17 @@ spec = describe "PostGIS features" $
         { matchStatus  = 201
         , matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"]
         }
+
+    it "works with Prefer: return=representation after DELETE" $
+      request methodDelete "/shops?id=in.(3,4)"
+        [("Accept", "application/geo+json"), ("Prefer", "return=representation")] "" `shouldRespondWith`
+        [json|{
+          "type" : "Featurecollection",
+          "features" : [
+            {"type": "Feature", "geometry": {"type":"Point","coordinates":[-71.081924,42.36437]}, "properties": {"id": 3, "address": "605 W Kendall St"}},
+            {"type": "Feature", "geometry": {"type":"Point","coordinates":[-71.11834,42.373238]}, "properties": {"id": 4, "address": "1354 Massachusetts Ave"}}
+          ]
+        }|]
+        { matchStatus  = 200
+        , matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"]
+        }
