@@ -244,5 +244,5 @@ supportPostGIS :: H.Session Bool
 supportPostGIS = H.statement () $ H.Statement sql HE.noParams decodeRow False
   where
     sql = "SELECT extversion >= " <> minimumPostGIS <> " FROM pg_catalog.pg_extension WHERE extname = 'postgis'"
-    decodeRow = fromMaybe False <$> (HD.rowMaybe $ HD.column $ HD.nonNullable HD.bool)
+    decodeRow = fromMaybe False <$> HD.rowMaybe (HD.column $ HD.nonNullable HD.bool)
     minimumPostGIS = "'3.0.0'"

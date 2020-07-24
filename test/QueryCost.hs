@@ -1,16 +1,16 @@
 module Main where
 
-import           Text.Heredoc
+import Text.Heredoc
 
 import Protolude      hiding (get, toS)
 import Protolude.Conv (toS)
 
-import qualified Hasql.Pool                 as P
+import qualified Hasql.Pool as P
 
 import PostgREST.QueryBuilder (requestToCallProcQuery)
 import PostgREST.Types
 
-import SpecHelper (getEnvVarWithDefault, exec)
+import SpecHelper (exec, getEnvVarWithDefault)
 
 import Test.Hspec
 

@@ -1,6 +1,6 @@
 module Feature.PostGISSpec where
 
-import Network.Wai (Application)
+import Network.Wai      (Application)
 import Network.Wai.Test (SResponse (simpleHeaders))
 
 import Network.HTTP.Types

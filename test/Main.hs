@@ -36,9 +36,9 @@ import qualified Feature.JsonOperatorSpec
 import qualified Feature.MultipleSchemaSpec
 import qualified Feature.NoJwtSpec
 import qualified Feature.NonexistentSchemaSpec
-import qualified Feature.PostGISSpec
 import qualified Feature.PgVersion95Spec
 import qualified Feature.PgVersion96Spec
+import qualified Feature.PostGISSpec
 import qualified Feature.ProxySpec
 import qualified Feature.QueryLimitedSpec
 import qualified Feature.QuerySpec

@@ -44,12 +44,12 @@ let
 
   postgresqlVersions =
     {
-      postgresql-12 = pkgs.postgresql_12.withPackages (p : [ p.postgis ]);
-      postgresql-11 = pkgs.postgresql_11.withPackages (p : [ p.postgis ]);
-      postgresql-10 = pkgs.postgresql_10.withPackages (p : [ p.postgis ]);
-      "postgresql-9.6" = pkgs.postgresql_9_6.withPackages (p : [ p.postgis ]);
-      "postgresql-9.5" = pkgs.postgresql_9_5.withPackages (p : [ p.postgis ]);
-      "postgresql-9.4" = pkgs.postgresql_9_4.withPackages (p : [ p.postgis ]);
+      postgresql-12 = pkgs.postgresql_12.withPackages (p: [ p.postgis ]);
+      postgresql-11 = pkgs.postgresql_11.withPackages (p: [ p.postgis ]);
+      postgresql-10 = pkgs.postgresql_10.withPackages (p: [ p.postgis ]);
+      "postgresql-9.6" = pkgs.postgresql_9_6.withPackages (p: [ p.postgis ]);
+      "postgresql-9.5" = pkgs.postgresql_9_5.withPackages (p: [ p.postgis ]);
+      "postgresql-9.4" = pkgs.postgresql_9_4.withPackages (p: [ p.postgis ]);
     };
 
   patches =
