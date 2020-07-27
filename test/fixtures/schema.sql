@@ -1786,11 +1786,12 @@ create table shops (
 , shop_geom extensions.geometry(POINT, 4326)
 );
 
-create table shop_beacons (
-  id      int primary key
-, name    text
-, coords  extensions.geometry(POINT, 4326)
-, shop_id int references shops(id)
+create table shop_bles (
+  id         int primary key
+, name       text
+, coords     extensions.geometry(POINT, 4326)
+, range_area extensions.geometry(POLYGON, 4326)
+, shop_id    int references shops(id)
 );
 
 create function get_shop(id int) returns shops as $$

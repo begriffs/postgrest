@@ -131,7 +131,7 @@ GRANT ALL ON TABLE
     , v1.children
     , v2.children
     , shops
-    , shop_beacons
+    , shop_bles
 TO postgrest_test_anonymous;
 
 GRANT INSERT ON TABLE insertonly TO postgrest_test_anonymous;

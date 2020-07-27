@@ -616,6 +616,8 @@ INSERT INTO shops(id, address, shop_geom) VALUES(1, '1369 Cambridge St', '010100
 INSERT INTO shops(id, address, shop_geom) VALUES(2, '757 Massachusetts Ave', '0101000020E61000001B81785DBFC651C09C1A683EE72E4540');
 INSERT INTO shops(id, address, shop_geom) VALUES(3, '605 W Kendall St', '0101000020E61000007B30293E3EC551C05FD218ADA32E4540');
 
-TRUNCATE TABLE shop_beacons CASCADE;
-INSERT INTO shop_beacons(id, name, coords, shop_id) VALUES(1, 'Beacon-1', 'SRID=4326;POINT(-71.10044 42.373695)', 1);
-INSERT INTO shop_beacons(id, name, coords, shop_id) VALUES(2, 'Beacon-2', 'SRID=4326;POINT(-71.10044 42.373695)', 1);
+TRUNCATE TABLE shop_bles CASCADE;
+INSERT INTO shop_bles(id, name, coords, shop_id, range_area) VALUES(1, 'Beacon-1', 'SRID=4326;POINT(-71.10044 42.373695)', 1,
+  extensions.ST_GeomFromGeoJSON('{"type": "Polygon", "coordinates": [ [ [ -71.10045254230499, 42.37387083326593 ], [ -71.10048070549963, 42.37377126199953 ], [ -71.10039688646793, 42.37375838212269 ], [ -71.10037006437777, 42.37385844878863 ], [ -71.10045254230499, 42.37387083326593 ] ] ]}'));
+INSERT INTO shop_bles(id, name, coords, shop_id, range_area) VALUES(2, 'Beacon-2', 'SRID=4326;POINT(-71.10044 42.373695)', 1,
+  extensions.ST_GeomFromGeoJSON('{"type": "Polygon", "coordinates": [ [ [ -71.10034391283989, 42.37385299961788 ], [ -71.10036939382553, 42.373756895982865 ], [ -71.1002916097641, 42.373745997623224 ], [ -71.1002641171217, 42.37384408279195 ], [ -71.10034391283989, 42.37385299961788 ] ] ]}'));

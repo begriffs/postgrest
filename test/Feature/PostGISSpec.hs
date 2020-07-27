@@ -53,23 +53,21 @@ spec = describe "PostGIS features" $
         { matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"] }
 
     it "works with resource embedding" $
-      request methodGet "/shops?select=*,shop_beacons(*)&id=eq.1"
+      request methodGet "/shops?select=*,shop_bles(*)&id=eq.1"
         [("Accept", "application/geo+json")] "" `shouldRespondWith`
         [json|{
           "type" : "Featurecollection",
           "features" : [
             {"type": "Feature",
-             "geometry": {"type":"Point","coordinates":[-71.10044,42.373695]},
+             "geometry": { "type":"Point", "coordinates":[-71.10044,42.373695]},
              "properties": {
-              "id": 1, "address": "1369 Cambridge St",
-              "shop_beacons": [
-                {"id":1,"name":"Beacon-1","coords":{"type":"Point","coordinates":[-71.10044,42.373695]},"shop_id":1},
-                {"id":2,"name":"Beacon-2","coords":{"type":"Point","coordinates":[-71.10044,42.373695]},"shop_id":1}
-              ]
-              }
+               "id": 1, "address": "1369 Cambridge St",
+               "shop_bles": [
+                 {"id":1,"name":"Beacon-1","coords":{"type":"Point","coordinates":[-71.10044,42.373695]},"range_area":{"type":"Polygon","coordinates":[[[-71.100452542305,42.3738708332659],[-71.1004807054996,42.3737712619995],[-71.1003968864679,42.3737583821227],[-71.1003700643778,42.3738584487886],[-71.100452542305,42.3738708332659]]]},"shop_id":1},
+                 {"id":2,"name":"Beacon-2","coords":{"type":"Point","coordinates":[-71.10044,42.373695]},"range_area":{"type":"Polygon","coordinates":[[[-71.1003439128399,42.3738529996179],[-71.1003693938255,42.3737568959829],[-71.1002916097641,42.3737459976232],[-71.1002641171217,42.3738440827919],[-71.1003439128399,42.3738529996179]]]},"shop_id":1}]
+             }
             }
-          ]
-        }|]
+          ]}|]
         { matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"] }
 
     it "works with RPC" $
@@ -115,3 +113,28 @@ spec = describe "PostGIS features" $
         { matchStatus  = 200
         , matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"]
         }
+
+    context "multiple geometry columns" $
+      it "can select the geometry column to get as a feature with ?select" $ do
+        request methodGet "/shop_bles?select=id,name,coords&id=eq.1"
+          [("Accept", "application/geo+json")] "" `shouldRespondWith`
+          [json|{
+            "type" : "Featurecollection",
+            "features" : [
+              {"type": "Feature",
+               "geometry": {"type":"Point","coordinates":[-71.10044,42.373695]},
+               "properties": {"id": 1, "name": "Beacon-1"}
+              }
+            ]}|]
+          { matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"] }
+
+        request methodGet "/shop_bles?select=id,name,range_area&id=eq.1"
+          [("Accept", "application/geo+json")] "" `shouldRespondWith`
+          [json|{
+            "type" : "Featurecollection",
+            "features" : [
+              {"type": "Feature",
+               "geometry": {"type":"Polygon","coordinates":[[[-71.100452542,42.373870833],[-71.100480705,42.373771262],[-71.100396886,42.373758382],[-71.100370064,42.373858449],[-71.100452542,42.373870833]]]},
+               "properties": {"id": 1, "name": "Beacon-1"}}
+            ]}|]
+          { matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"] }
