@@ -176,3 +176,12 @@ spec = describe "PostGIS features" $
                "properties": {"id": 1, "name": "Beacon-1"}}
             ]}|]
           { matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"] }
+
+    it "gets the geojson geometry object with the regular application/json output" $
+      request methodGet "/shops?id=eq.1" [] "" `shouldRespondWith`
+        [json|[{
+          "id":1,
+          "address":"1369 Cambridge St",
+          "shop_geom": {"type":"Point","coordinates":[-71.10044, 42.373695]}
+          }]|]
+        { matchHeaders = [matchContentTypeJson] }
