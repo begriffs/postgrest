@@ -390,7 +390,7 @@ responseContentTypeOrError accepts rawContentTypes action target = serves conten
                              ++ [CTOpenAPI | tpIsRootSpec target]
       ActionInspect _    ->  [CTOpenAPI, CTApplicationJSON]
       ActionInfo         ->  [CTTextCSV]
-      ActionSingleUpsert ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
+      ActionSingleUpsert ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV, CTGeoJSON]
     serves sProduces cAccepts =
       case mutuallyAgreeable sProduces cAccepts of
         Nothing -> Left . errorResponseFor . ContentTypeError . map toMime $ cAccepts
