@@ -383,7 +383,7 @@ responseContentTypeOrError accepts rawContentTypes action target = serves conten
       ActionRead _       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
                              ++ rawContentTypes
       ActionCreate       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
-      ActionUpdate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
+      ActionUpdate       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
       ActionDelete       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
       ActionInvoke _     ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
                              ++ rawContentTypes
