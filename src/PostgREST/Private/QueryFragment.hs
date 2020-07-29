@@ -85,7 +85,7 @@ asBinaryF :: FieldName -> SqlFragment
 asBinaryF fieldName = "coalesce(string_agg(_postgrest_t." <> pgFmtIdent fieldName <> ", ''), '')"
 
 asGeoJsonF ::  SqlFragment
-asGeoJsonF = "json_build_object('type', 'Featurecollection', 'features', coalesce(json_agg(ST_AsGeoJSON(_postgrest_t)::json), '[]'))"
+asGeoJsonF = "json_build_object('type', 'FeatureCollection', 'features', coalesce(json_agg(ST_AsGeoJSON(_postgrest_t)::json), '[]'))"
 
 locationF :: [Text] -> SqlFragment
 locationF pKeys = [qc|(

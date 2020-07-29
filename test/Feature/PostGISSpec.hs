@@ -18,7 +18,7 @@ spec = describe "PostGIS features" $
       request methodGet "/shops"
         [("Accept", "application/geo+json")] "" `shouldRespondWith`
         [json| {
-          "type" : "Featurecollection",
+          "type" : "FeatureCollection",
           "features" : [
             {"type": "Feature", "geometry": {"type":"Point","coordinates":[-71.10044,42.373695]}, "properties": {"id": 1, "address": "1369 Cambridge St"}}
           , {"type": "Feature", "geometry": {"type":"Point","coordinates":[-71.10543,42.366432]}, "properties": {"id": 2, "address": "757 Massachusetts Ave"}}
@@ -38,7 +38,7 @@ spec = describe "PostGIS features" $
       request methodGet "/shops?id=gt.3"
         [("Accept", "application/geo+json")] "" `shouldRespondWith`
         [json| {
-          "type" : "Featurecollection",
+          "type" : "FeatureCollection",
           "features" : []} |]
         { matchHeaders = ["Content-Type" <:> "application/geo+json; charset=utf-8"] }
 
@@ -46,7 +46,7 @@ spec = describe "PostGIS features" $
       request methodGet "/shops?select=id,shop_geom&id=eq.1"
         [("Accept", "application/geo+json")] "" `shouldRespondWith`
         [json| {
-          "type" : "Featurecollection",
+          "type" : "FeatureCollection",
           "features" : [
             {"type": "Feature", "geometry": {"type":"Point","coordinates":[-71.10044,42.373695]}, "properties": {"id": 1}}
           ] }|]
@@ -56,7 +56,7 @@ spec = describe "PostGIS features" $
       request methodGet "/shops?select=*,shop_bles(*)&id=eq.1"
         [("Accept", "application/geo+json")] "" `shouldRespondWith`
         [json|{
-          "type" : "Featurecollection",
+          "type" : "FeatureCollection",
           "features" : [
             {"type": "Feature",
              "geometry": { "type":"Point", "coordinates":[-71.10044,42.373695]},
@@ -74,7 +74,7 @@ spec = describe "PostGIS features" $
       request methodGet "/rpc/get_shop?id=1"
         [("Accept", "application/geo+json")] "" `shouldRespondWith`
         [json|{
-          "type" : "Featurecollection",
+          "type" : "FeatureCollection",
           "features" : [
             {"type": "Feature", "geometry": {"type":"Point","coordinates":[-71.10044,42.373695]}, "properties": {"id": 1, "address": "1369 Cambridge St"} }
           ]
@@ -87,7 +87,7 @@ spec = describe "PostGIS features" $
           {"id": 4, "address": "1354 Massachusetts Ave", "shop_geom": "SRID=4326;POINT(-71.11834 42.373238)"}
         |] `shouldRespondWith`
         [json|{
-          "type": "Featurecollection",
+          "type": "FeatureCollection",
           "features": [
             {
               "type": "Feature",
@@ -106,7 +106,7 @@ spec = describe "PostGIS features" $
         [json| { "address": "1354 Massachusetts Avenue"} |]
         `shouldRespondWith`
         [json|{
-          "type": "Featurecollection",
+          "type": "FeatureCollection",
           "features": [
             {
               "type": "Feature",
@@ -125,7 +125,7 @@ spec = describe "PostGIS features" $
         [json| { "id": 4, "address": "1354 Massachusetts Avenue"} |]
         `shouldRespondWith`
         [json|{
-          "type": "Featurecollection",
+          "type": "FeatureCollection",
           "features": [
             {
               "type": "Feature",
@@ -142,7 +142,7 @@ spec = describe "PostGIS features" $
       request methodDelete "/shops?id=in.(3,4)"
         [("Accept", "application/geo+json"), ("Prefer", "return=representation")] "" `shouldRespondWith`
         [json|{
-          "type" : "Featurecollection",
+          "type" : "FeatureCollection",
           "features" : [
             {"type": "Feature", "geometry": {"type":"Point","coordinates":[-71.081924,42.36437]}, "properties": {"id": 3, "address": "605 W Kendall St"}},
             {"type": "Feature", "geometry": {"type":"Point","coordinates":[-71.11834,42.373238]}, "properties": {"id": 4, "address": "1354 Massachusetts Avenue"}}
@@ -157,7 +157,7 @@ spec = describe "PostGIS features" $
         request methodGet "/shop_bles?select=id,name,coords&id=eq.1"
           [("Accept", "application/geo+json")] "" `shouldRespondWith`
           [json|{
-            "type" : "Featurecollection",
+            "type" : "FeatureCollection",
             "features" : [
               {"type": "Feature",
                "geometry": {"type":"Point","coordinates":[-71.10044,42.373695]},
@@ -169,7 +169,7 @@ spec = describe "PostGIS features" $
         request methodGet "/shop_bles?select=id,name,range_area&id=eq.1"
           [("Accept", "application/geo+json")] "" `shouldRespondWith`
           [json|{
-            "type" : "Featurecollection",
+            "type" : "FeatureCollection",
             "features" : [
               {"type": "Feature",
                "geometry": {"type":"Polygon","coordinates":[[[-71.100452542,42.373870833],[-71.100480705,42.373771262],[-71.100396886,42.373758382],[-71.100370064,42.373858449],[-71.100452542,42.373870833]]]},
@@ -180,8 +180,7 @@ spec = describe "PostGIS features" $
     it "gets the geojson geometry object with the regular application/json output" $
       request methodGet "/shops?id=eq.1" [] "" `shouldRespondWith`
         [json|[{
-          "id":1,
-          "address":"1369 Cambridge St",
-          "shop_geom": {"type":"Point","coordinates":[-71.10044, 42.373695]}
+          "id":1, "address":"1369 Cambridge St",
+          "shop_geom":{"type":"Point","coordinates":[-71.10044, 42.373695]}
           }]|]
         { matchHeaders = [matchContentTypeJson] }
