@@ -15,8 +15,11 @@ column = HD.column . HD.nonNullable
 nullableColumn :: HD.Value a -> HD.Row (Maybe a)
 nullableColumn = HD.column . HD.nullable
 
-element :: HD.Value a -> HD.Array a
-element = HD.element . HD.nonNullable
+arrayColumn :: HD.Value a -> HD.Row [a]
+arrayColumn = column . HD.array . HD.dimension replicateM . HD.element . HD.nonNullable
+
+nullableArrayColumn :: HD.Value a -> HD.Row (Maybe [a])
+nullableArrayColumn = nullableColumn . HD.array . HD.dimension replicateM . HD.element . HD.nonNullable
 
 param :: HE.Value a -> HE.Params a
 param = HE.param . HE.nonNullable

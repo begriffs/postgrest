@@ -1683,19 +1683,21 @@ declare
   user_agent text := current_setting('request.header.user-agent', true);
   req_path   text := current_setting('request.path', true);
   req_accept text := current_setting('request.header.accept', true);
+  req_method text := current_setting('request.method', true);
 begin
   if user_agent similar to 'MSIE (6.0|7.0)' then
     perform set_config('response.headers',
-      '[{"Cache-Control": "no-cache, no-store, must-revalidate"}]', false);
+      '[{"Cache-Control": "no-cache, no-store, must-revalidate"}]', true);
   elsif req_path similar to '/(items|projects)' and req_accept = 'text/csv' then
     perform set_config('response.headers',
-      format('[{"Content-Disposition": "attachment; filename=%s.csv"}]', trim('/' from req_path)), false);
+      format('[{"Content-Disposition": "attachment; filename=%s.csv"}]', trim('/' from req_path)), true);
   elsif req_path similar to '/(clients|rpc/getallprojects)' then
     perform set_config('response.headers',
-      '[{"Content-Type": "application/geo+json"}]', false);
-  else
+      '[{"Content-Type": "application/custom+json"}]', true);
+  elsif req_path = '/items' and
+        req_method similar to 'POST|PATCH|PUT|DELETE' then
     perform set_config('response.headers',
-      '[{"X-Custom-Header": "mykey=myval"}]', false);
+      '[{"X-Custom-Header": "mykey=myval"}]', true);
   end if;
 end; $$ language plpgsql;
 
@@ -1777,3 +1779,34 @@ create function v2.get_parents_below(id int)
 returns setof v2.parents as $$
   select * from v2.parents where id < $1;
 $$ language sql;
+
+-- For manual testing, on a browser try:
+-- http://localhost:3000/rpc/ret_image?name=A.png
+-- http://localhost:3000/rpc/ret_image?name=B.png
+-- Both urls should show an image
+create or replace function ret_image(name text) returns bytea as $$
+  select img from images where name = $1;
+$$ language sql set pgrst.accept = 'image/png';
+
+-- For manual testing, on a browser try: http://localhost:3000/rpc/images.html
+-- It should show images of letters "A" and "B"
+create or replace function "images.html"(add_charset bool default false) returns text as $_$ begin
+if add_charset then
+  perform set_config('response.headers',
+    '[{"Content-Type": "text/html; charset=utf-8"}]', true);
+end if;
+return $$
+<html>
+  <head>
+    <title>Images from PostgREST</title>
+  </head>
+  <body>
+    <img src="./ret_image?name=A.png" alt="A"/>
+    <img src="./ret_image?name=B.png" alt="B"/>
+  </body>
+</html>
+$$::text;
+end $_$ language plpgsql
+set pgrst.accept = 'text/html'
+set other.config = 'other'
+set another.config = 'another';

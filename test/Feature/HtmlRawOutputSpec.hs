@@ -26,5 +26,5 @@ spec = describe "When raw-media-types is set to \"text/html\"" $
           |</html>
           |]
       { matchStatus = 200
-      , matchHeaders = ["Content-Type" <:> "text/html; charset=utf-8"]
+      , matchHeaders = ["Content-Type" <:> "text/html"]
       }

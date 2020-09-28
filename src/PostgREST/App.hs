@@ -121,8 +121,9 @@ transactionMode proc action =
 
 app :: DbStructure -> Maybe ProcDescription -> S.Set FieldName -> AppConfig -> ApiRequest -> H.Transaction Response
 app dbStructure proc cols conf apiRequest =
-  let rawContentTypes = (decodeContentType <$> configRawMediaTypes conf) `L.union` [ CTOctetStream, CTTextPlain ] in
-  case responseContentTypeOrError (iAccepts apiRequest) rawContentTypes (iAction apiRequest) (iTarget apiRequest) of
+  let rawContentTypes = (decodeContentType <$> configRawMediaTypes conf) `L.union` [ CTOctetStream, CTTextPlain ]
+      procAccept = pdAccept =<< proc in
+  case responseContentTypeOrError procAccept (iAccepts apiRequest) rawContentTypes (iAction apiRequest) (iTarget apiRequest) of
     Left errorResponse -> return errorResponse
     Right contentType ->
       case (iAction apiRequest, iTarget apiRequest, iPayload apiRequest) of
@@ -303,7 +304,7 @@ app dbStructure proc cols conf apiRequest =
                 preferParams = iPreferParameters apiRequest
                 pq = requestToCallProcQuery qi (specifiedProcArgs cols proc) returnsScalar preferParams returning
                 stm = callProcStatement returnsScalar pq q cq shouldCount (contentType == CTSingularJSON)
-                        (contentType == CTTextCSV) (contentType `elem` rawContentTypes) (preferParams == Just MultipleObjects)
+                        (contentType == CTTextCSV) (contentType `elem` rawContentTypes || isJust procAccept) (preferParams == Just MultipleObjects)
                         bField pgVer
               row <- H.statement (toS $ pjRaw pJson) stm
               let (tableTotal, queryTotal, body, gucHeaders, gucStatus) = row
@@ -376,8 +377,8 @@ app dbStructure proc cols conf apiRequest =
           (readRequestToQuery <$> readReq) <*>
           (mutateRequestToQuery <$> mutReq)
 
-responseContentTypeOrError :: [ContentType] -> [ContentType] -> Action -> Target -> Either Response ContentType
-responseContentTypeOrError accepts rawContentTypes action target = serves contentTypesForRequest accepts
+responseContentTypeOrError :: Maybe Text -> [ContentType] -> [ContentType] -> Action -> Target -> Either Response ContentType
+responseContentTypeOrError procAccept accepts rawContentTypes action target = serves contentTypesForRequest accepts
   where
     contentTypesForRequest = case action of
       ActionRead _       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
@@ -385,9 +386,11 @@ responseContentTypeOrError accepts rawContentTypes action target = serves conten
       ActionCreate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
       ActionUpdate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
       ActionDelete       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
-      ActionInvoke _     ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
-                             ++ rawContentTypes
-                             ++ [CTOpenAPI | tpIsRootSpec target]
+      ActionInvoke _     ->  case procAccept of
+                               Just acc -> [CTOther $ toS acc]
+                               _        -> [CTApplicationJSON, CTSingularJSON, CTTextCSV]
+                                           ++ rawContentTypes
+                                           ++ [CTOpenAPI | tpIsRootSpec target]
       ActionInspect _    ->  [CTOpenAPI, CTApplicationJSON]
       ActionInfo         ->  [CTTextCSV]
       ActionSingleUpsert ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]

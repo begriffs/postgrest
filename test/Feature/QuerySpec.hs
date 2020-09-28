@@ -10,7 +10,8 @@ import Test.Hspec.Wai.JSON
 
 import Text.Heredoc
 
-import PostgREST.Types (PgVersion, pgVersion112, pgVersion121)
+import PostgREST.Types (PgVersion, pgVersion112, pgVersion121,
+                        pgVersion96)
 import Protolude       hiding (get)
 import SpecHelper
 
@@ -182,6 +183,35 @@ spec actualPgVersion = do
                     {"text_search_vector": "'amus':5 'fair':7 'impossibl':9 'peu':4"},
                     {"text_search_vector": "'art':4 'spass':5 'unmog':7"}]|]
                   { matchHeaders = [matchContentTypeJson] }
+
+      when (actualPgVersion >= pgVersion96) $
+        context "Use of the phraseto_tsquery function" $ do
+          it "finds matches" $
+            get "/tsearch?text_search_vector=phfts.The%20Fat%20Cats" `shouldRespondWith`
+              [json| [{"text_search_vector": "'ate':3 'cat':2 'fat':1 'rat':4" }] |]
+              { matchHeaders = [matchContentTypeJson] }
+
+          it "finds matches with different dictionaries" $
+            get "/tsearch?text_search_vector=phfts(german).Art%20Spass" `shouldRespondWith`
+              [json| [{"text_search_vector": "'art':4 'spass':5 'unmog':7" }] |]
+              { matchHeaders = [matchContentTypeJson] }
+
+          it "can be negated with not operator" $
+            get "/tsearch?text_search_vector=not.phfts(english).The%20Fat%20Cats" `shouldRespondWith`
+              [json| [
+                {"text_search_vector": "'fun':5 'imposs':9 'kind':3"},
+                {"text_search_vector": "'also':2 'fun':3 'possibl':8"},
+                {"text_search_vector": "'amus':5 'fair':7 'impossibl':9 'peu':4"},
+                {"text_search_vector": "'art':4 'spass':5 'unmog':7"}]|]
+              { matchHeaders = [matchContentTypeJson] }
+
+          it "can be used with or query param" $
+            get "/tsearch?or=(text_search_vector.phfts(german).Art%20Spass, text_search_vector.phfts(french).amusant, text_search_vector.fts(english).impossible)" `shouldRespondWith`
+              [json|[
+                {"text_search_vector": "'fun':5 'imposs':9 'kind':3" },
+                {"text_search_vector": "'amus':5 'fair':7 'impossibl':9 'peu':4" },
+                {"text_search_vector": "'art':4 'spass':5 'unmog':7"}
+              ]|] { matchHeaders = [matchContentTypeJson] }
 
     it "matches with computed column" $
       get "/items?always_true=eq.true&order=id.asc" `shouldRespondWith`
@@ -762,7 +792,7 @@ spec actualPgVersion = do
       request methodGet "/images_base64?select=img&name=eq.A.png" (acceptHdrs "application/octet-stream") ""
         `shouldRespondWith` "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeAQMAAAAB/jzhAAAABlBMVEUAAAD/AAAb/40iAAAAP0lEQVQI12NgwAbYG2AE/wEYwQMiZB4ACQkQYZEAIgqAhAGIKLCAEQ8kgMT/P1CCEUwc4IMSzA3sUIIdCHECAGSQEkeOTUyCAAAAAElFTkSuQmCC"
         { matchStatus = 200
-        , matchHeaders = ["Content-Type" <:> "application/octet-stream; charset=utf-8"]
+        , matchHeaders = ["Content-Type" <:> "application/octet-stream"]
         }
 
     it "can get raw output with Accept: text/plain" $
@@ -788,7 +818,7 @@ spec actualPgVersion = do
       request methodGet "/images_base64?select=img&name=in.(A.png,B.png)" (acceptHdrs "application/octet-stream") ""
         `shouldRespondWith` "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeAQMAAAAB/jzhAAAABlBMVEUAAAD/AAAb/40iAAAAP0lEQVQI12NgwAbYG2AE/wEYwQMiZB4ACQkQYZEAIgqAhAGIKLCAEQ8kgMT/P1CCEUwc4IMSzA3sUIIdCHECAGSQEkeOTUyCAAAAAElFTkSuQmCCiVBORw0KGgoAAAANSUhEUgAAAB4AAAAeAQMAAAAB/jzhAAAABlBMVEX///8AAP94wDzzAAAAL0lEQVQIW2NgwAb+HwARH0DEDyDxwAZEyGAhLODqHmBRzAcn5GAS///A1IF14AAA5/Adbiiz/0gAAAAASUVORK5CYII="
         { matchStatus = 200
-        , matchHeaders = ["Content-Type" <:> "application/octet-stream; charset=utf-8"]
+        , matchHeaders = ["Content-Type" <:> "application/octet-stream"]
         }
 
   describe "values with quotes in IN and NOT IN" $ do

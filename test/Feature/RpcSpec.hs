@@ -3,7 +3,7 @@ module Feature.RpcSpec where
 import qualified Data.ByteString.Lazy as BL (empty)
 
 import Network.Wai      (Application)
-import Network.Wai.Test (SResponse (simpleBody, simpleStatus))
+import Network.Wai.Test (SResponse (simpleBody, simpleHeaders, simpleStatus))
 
 import Network.HTTP.Types
 import Test.Hspec          hiding (pendingWith)
@@ -13,7 +13,7 @@ import Text.Heredoc
 
 import PostgREST.Types (PgVersion, pgVersion100, pgVersion109,
                         pgVersion110, pgVersion112, pgVersion114,
-                        pgVersion95)
+                        pgVersion95, pgVersion96)
 import Protolude       hiding (get)
 import SpecHelper
 
@@ -588,7 +588,7 @@ spec actualPgVersion =
           request methodPost "/rpc/ret_base64_bin" (acceptHdrs "application/octet-stream") ""
             `shouldRespondWith` "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeAQMAAAAB/jzhAAAABlBMVEUAAAD/AAAb/40iAAAAP0lEQVQI12NgwAbYG2AE/wEYwQMiZB4ACQkQYZEAIgqAhAGIKLCAEQ8kgMT/P1CCEUwc4IMSzA3sUIIdCHECAGSQEkeOTUyCAAAAAElFTkSuQmCC"
             { matchStatus = 200
-            , matchHeaders = ["Content-Type" <:> "application/octet-stream; charset=utf-8"]
+            , matchHeaders = ["Content-Type" <:> "application/octet-stream"]
             }
 
         it "can get raw output with Accept: text/plain" $
@@ -603,7 +603,7 @@ spec actualPgVersion =
           request methodPost "/rpc/ret_rows_with_base64_bin?select=img" (acceptHdrs "application/octet-stream") ""
             `shouldRespondWith` "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeAQMAAAAB/jzhAAAABlBMVEUAAAD/AAAb/40iAAAAP0lEQVQI12NgwAbYG2AE/wEYwQMiZB4ACQkQYZEAIgqAhAGIKLCAEQ8kgMT/P1CCEUwc4IMSzA3sUIIdCHECAGSQEkeOTUyCAAAAAElFTkSuQmCCiVBORw0KGgoAAAANSUhEUgAAAB4AAAAeAQMAAAAB/jzhAAAABlBMVEX///8AAP94wDzzAAAAL0lEQVQIW2NgwAb+HwARH0DEDyDxwAZEyGAhLODqHmBRzAcn5GAS///A1IF14AAA5/Adbiiz/0gAAAAASUVORK5CYII="
             { matchStatus = 200
-            , matchHeaders = ["Content-Type" <:> "application/octet-stream; charset=utf-8"]
+            , matchHeaders = ["Content-Type" <:> "application/octet-stream"]
             }
 
         it "fails if a single column is not selected" $
@@ -647,7 +647,221 @@ spec actualPgVersion =
                 [json|[{"text_search_vector":"'fun':5 'imposs':9 'kind':3"}]|]
                 { matchHeaders = [matchContentTypeJson] }
 
+      when (actualPgVersion >= pgVersion96) $
+        it "should work with the phraseto_tsquery function" $
+          get "/rpc/get_tsearch?text_search_vector=phfts(english).impossible" `shouldRespondWith`
+            [json|[{"text_search_vector":"'fun':5 'imposs':9 'kind':3"}]|]
+            { matchHeaders = [matchContentTypeJson] }
+
     it "should work with an argument of custom type in public schema" $
         get "/rpc/test_arg?my_arg=something" `shouldRespondWith`
           [json|"foobar"|]
           { matchHeaders = [matchContentTypeJson] }
+
+    when (actualPgVersion >= pgVersion96) $ do
+      context "GUC headers on function calls" $ do
+        it "succeeds setting the headers" $ do
+          get "/rpc/get_projects_and_guc_headers?id=eq.2&select=id"
+            `shouldRespondWith` [json|[{"id": 2}]|]
+            {matchHeaders = [
+                matchContentTypeJson,
+                "X-Test"   <:> "key1=val1; someValue; key2=val2",
+                "X-Test-2" <:> "key1=val1"]}
+          get "/rpc/get_int_and_guc_headers?num=1"
+            `shouldRespondWith` [json|1|]
+            {matchHeaders = [
+                matchContentTypeJson,
+                "X-Test"   <:> "key1=val1; someValue; key2=val2",
+                "X-Test-2" <:> "key1=val1"]}
+          post "/rpc/get_int_and_guc_headers" [json|{"num": 1}|]
+            `shouldRespondWith` [json|1|]
+            {matchHeaders = [
+                matchContentTypeJson,
+                "X-Test"   <:> "key1=val1; someValue; key2=val2",
+                "X-Test-2" <:> "key1=val1"]}
+
+        it "fails when setting headers with wrong json structure" $ do
+          get "/rpc/bad_guc_headers_1"
+            `shouldRespondWith`
+            [json|{"message":"response.headers guc must be a JSON array composed of objects with a single key and a string value"}|]
+            { matchStatus  = 500
+            , matchHeaders = [ matchContentTypeJson ]
+            }
+          get "/rpc/bad_guc_headers_2"
+            `shouldRespondWith`
+            [json|{"message":"response.headers guc must be a JSON array composed of objects with a single key and a string value"}|]
+            { matchStatus  = 500
+            , matchHeaders = [ matchContentTypeJson ]
+            }
+          get "/rpc/bad_guc_headers_3"
+            `shouldRespondWith`
+            [json|{"message":"response.headers guc must be a JSON array composed of objects with a single key and a string value"}|]
+            { matchStatus  = 500
+            , matchHeaders = [ matchContentTypeJson ]
+            }
+          post "/rpc/bad_guc_headers_1" [json|{}|]
+            `shouldRespondWith`
+            [json|{"message":"response.headers guc must be a JSON array composed of objects with a single key and a string value"}|]
+            { matchStatus  = 500
+            , matchHeaders = [ matchContentTypeJson ]
+            }
+
+        it "can set the same http header twice" $
+          get "/rpc/set_cookie_twice"
+            `shouldRespondWith` "null"
+            {matchHeaders = [
+                matchContentTypeJson,
+                "Set-Cookie" <:> "sessionid=38afes7a8; HttpOnly; Path=/",
+                "Set-Cookie" <:> "id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT; Secure; HttpOnly"]}
+
+      it "can override the Location header on a trigger" $
+        request methodPost "/stuff" [] [json|[{"id": 1, "name": "stuff 1"}]|]
+          `shouldRespondWith` ""
+          { matchStatus = 201
+          , matchHeaders = ["Location" <:> "/stuff?id=eq.1&overriden=true"]
+          }
+
+      -- On https://github.com/PostgREST/postgrest/issues/1427#issuecomment-595907535
+      -- it was reported that blank headers ` : ` where added and that cause proxies to fail the requests.
+      -- These tests are to ensure no blank headers are added.
+      context "Blank headers bug" $ do
+        it "shouldn't add blank headers on POST" $ do
+          r <- request methodPost "/loc_test" [] [json|{"id": "1", "c": "c1"}|]
+          liftIO $ do
+            let respHeaders = simpleHeaders r
+            respHeaders `shouldSatisfy` noBlankHeader
+
+        it "shouldn't add blank headers on PATCH" $ do
+          r <- request methodPatch "/loc_test?id=eq.1" [] [json|{"c": "c2"}|]
+          liftIO $ do
+            let respHeaders = simpleHeaders r
+            respHeaders `shouldSatisfy` noBlankHeader
+
+        it "shouldn't add blank headers on GET" $ do
+          r <- request methodGet "/loc_test" [] ""
+          liftIO $ do
+            let respHeaders = simpleHeaders r
+            respHeaders `shouldSatisfy` noBlankHeader
+
+        it "shouldn't add blank headers on DELETE" $ do
+          r <- request methodDelete "/loc_test?id=eq.1" [] ""
+          liftIO $ do
+            let respHeaders = simpleHeaders r
+            respHeaders `shouldSatisfy` noBlankHeader
+
+      context "GUC status override" $ do
+        it "can override the status on RPC" $
+          get "/rpc/send_body_status_403"
+            `shouldRespondWith`
+            [json|{"message" : "invalid user or password"}|]
+            { matchStatus  = 403
+            , matchHeaders = [ matchContentTypeJson ]
+            }
+
+        it "can override the status through trigger" $
+          request methodPatch "/stuff?id=eq.1" [] [json|[{"name": "updated stuff 1"}]|]
+            `shouldRespondWith` 205
+
+        it "fails when setting invalid status guc" $
+          get "/rpc/send_bad_status"
+            `shouldRespondWith`
+            [json|{"message":"response.status guc must be a valid status code"}|]
+            { matchStatus  = 500
+            , matchHeaders = [ matchContentTypeJson ]
+            }
+
+    context "pgrst.accept" $ do
+      it "can get raw output with no Accept header, Accept: */* and Accept: text/html" $ do
+        request methodGet "/rpc/images.html" [] ""
+          `shouldRespondWith`
+          [str|
+              |<html>
+              |  <head>
+              |    <title>Images from PostgREST</title>
+              |  </head>
+              |  <body>
+              |    <img src="./ret_image?name=A.png" alt="A"/>
+              |    <img src="./ret_image?name=B.png" alt="B"/>
+              |  </body>
+              |</html>
+              |]
+          { matchStatus = 200
+          , matchHeaders = ["Content-Type" <:> "text/html"]
+          }
+        request methodGet "/rpc/images.html" (acceptHdrs "*/*") ""
+          `shouldRespondWith`
+          [str|
+              |<html>
+              |  <head>
+              |    <title>Images from PostgREST</title>
+              |  </head>
+              |  <body>
+              |    <img src="./ret_image?name=A.png" alt="A"/>
+              |    <img src="./ret_image?name=B.png" alt="B"/>
+              |  </body>
+              |</html>
+              |]
+          { matchStatus = 200
+          , matchHeaders = ["Content-Type" <:> "text/html"]
+          }
+        request methodGet "/rpc/images.html" (acceptHdrs "text/html") ""
+          `shouldRespondWith`
+          [str|
+              |<html>
+              |  <head>
+              |    <title>Images from PostgREST</title>
+              |  </head>
+              |  <body>
+              |    <img src="./ret_image?name=A.png" alt="A"/>
+              |    <img src="./ret_image?name=B.png" alt="B"/>
+              |  </body>
+              |</html>
+              |]
+          { matchStatus = 200
+          , matchHeaders = ["Content-Type" <:> "text/html"]
+          }
+
+      when (actualPgVersion >= pgVersion96) $ do
+        it "can be overriden by setting response.headers" $
+          request methodHead "/rpc/images.html?add_charset=true" [] ""
+            `shouldRespondWith` ""
+            { matchStatus = 200
+            , matchHeaders = ["Content-Type" <:> "text/html; charset=utf-8"]
+            }
+
+      it "should fail for default types or unknown types" $ do
+        request methodGet "/rpc/images.html" (acceptHdrs "application/json") ""
+          `shouldRespondWith` 415
+        request methodGet "/rpc/images.html" (acceptHdrs "text/csv") ""
+          `shouldRespondWith` 415
+        request methodGet "/rpc/images.html" (acceptHdrs "application/unknown") ""
+          `shouldRespondWith` 415
+
+      context "Firefox/Chrome images requests" $ do
+        it "should work on <img> requests" $ do
+          let chromeAcceptHdrs = acceptHdrs "image/webp,image/apng,image/*,*/*;q=0.8"
+              firefoxAcceptHdrs = acceptHdrs "image/webp,*/*"
+          request methodHead "/rpc/ret_image?name=A.png" chromeAcceptHdrs ""
+            `shouldRespondWith` ""
+            { matchStatus = 200
+            , matchHeaders = ["Content-Type" <:> "image/png"]
+            }
+          request methodHead "/rpc/ret_image?name=A.png" firefoxAcceptHdrs ""
+            `shouldRespondWith` ""
+            { matchStatus = 200
+            , matchHeaders = ["Content-Type" <:> "image/png"]
+            }
+
+        it "should work on navigation requests(right click -> view image)" $ do
+          let chromeAcceptHdrs = acceptHdrs "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"
+              firefoxAcceptHdrs = acceptHdrs "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+          request methodHead "/rpc/ret_image?name=A.png" chromeAcceptHdrs ""
+            `shouldRespondWith` ""
+            { matchStatus = 200
+            , matchHeaders = ["Content-Type" <:> "image/png"]
+            }
+          request methodHead "/rpc/ret_image?name=A.png" firefoxAcceptHdrs ""
+            `shouldRespondWith` ""
+            { matchStatus = 200
+            , matchHeaders = ["Content-Type" <:> "image/png"]
+            }

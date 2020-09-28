@@ -120,11 +120,9 @@ createReadStatement selectQuery countQuery isSingle countTotal asCsv binaryField
 -}
 standardRow :: HD.Row ResultsWithCount
 standardRow = (,,,,,) <$> nullableColumn HD.int8 <*> column HD.int8
-                      <*> column header <*> column HD.bytea
+                      <*> arrayColumn HD.bytea <*> column HD.bytea
                       <*> (fromMaybe (Right []) <$> nullableColumn decodeGucHeaders)
                       <*> (fromMaybe (Right Nothing) <$> nullableColumn decodeGucStatus)
-  where
-    header = HD.array $ HD.dimension replicateM $ element HD.bytea
 
 type ProcResults = (Maybe Int64, Int64, ByteString, Either SimpleError [GucHeader], Either SimpleError (Maybe Status))
 

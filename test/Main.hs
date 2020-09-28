@@ -36,14 +36,13 @@ import qualified Feature.JsonOperatorSpec
 import qualified Feature.MultipleSchemaSpec
 import qualified Feature.NoJwtSpec
 import qualified Feature.NonexistentSchemaSpec
-import qualified Feature.PgVersion95Spec
-import qualified Feature.PgVersion96Spec
 import qualified Feature.ProxySpec
 import qualified Feature.QueryLimitedSpec
 import qualified Feature.QuerySpec
 import qualified Feature.RangeSpec
 import qualified Feature.RawOutputTypesSpec
 import qualified Feature.RootSpec
+import qualified Feature.RpcPreRequestGucsSpec
 import qualified Feature.RpcSpec
 import qualified Feature.SingularSpec
 import qualified Feature.StructureSpec
@@ -99,8 +98,7 @@ main = do
         analyzeTable testDbConn "child_entities"
 
       extraSpecs =
-        [("Feature.UpsertSpec", Feature.UpsertSpec.spec) | actualPgVersion >= pgVersion95] ++
-        [("Feature.PgVersion95Spec", Feature.PgVersion95Spec.spec) | actualPgVersion >= pgVersion95]
+        [("Feature.UpsertSpec", Feature.UpsertSpec.spec) | actualPgVersion >= pgVersion95]
 
       specs = uncurry describe <$> [
           ("Feature.AuthSpec"                , Feature.AuthSpec.spec actualPgVersion)
@@ -175,12 +173,13 @@ main = do
     before extraSearchPathApp $
       describe "Feature.ExtraSearchPathSpec" Feature.ExtraSearchPathSpec.spec
 
-    -- this test runs with a root spec function override
+
     when (actualPgVersion >= pgVersion96) $ do
+      -- this test runs with a root spec function override
       before rootSpecApp $
         describe "Feature.RootSpec" Feature.RootSpec.spec
       before responseHeadersApp $
-        describe "Feature.PgVersion96Spec" Feature.PgVersion96Spec.spec
+        describe "Feature.RpcPreRequestGucsSpec" Feature.RpcPreRequestGucsSpec.spec
 
     -- this test runs with multiple schemas
     before multipleSchemaApp $

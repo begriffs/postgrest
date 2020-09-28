@@ -98,10 +98,10 @@ decodeRels tables cols =
     <$> column HD.text
     <*> column HD.text
     <*> column HD.text
-    <*> column (HD.array (HD.dimension replicateM (element HD.text)))
+    <*> arrayColumn HD.text
     <*> column HD.text
     <*> column HD.text
-    <*> column (HD.array (HD.dimension replicateM (element HD.text)))
+    <*> arrayColumn HD.text
 
 decodePks :: [Table] -> HD.Result [PrimaryKey]
 decodePks tables =
@@ -141,6 +141,7 @@ decodeProcs =
                   <*> column HD.bool
                   <*> column HD.char)
               <*> (parseVolatility <$> column HD.char)
+              <*> (parseAccept <$> nullableArrayColumn HD.text)
 
     addKey :: ProcDescription -> (QualifiedIdentifier, ProcDescription)
     addKey pd = (QualifiedIdentifier (pdSchema pd) (pdName pd), pd)
@@ -176,6 +177,9 @@ decodeProcs =
                       | v == 's' = Stable
                       | otherwise = Volatile -- only 'v' can happen here
 
+    parseAccept :: Maybe [Text] -> Maybe Text
+    parseAccept confs = T.stripPrefix "pgrst.accept=" =<< find ("pgrst.accept" `T.isPrefixOf`) (fromMaybe [] confs)
+
 allProcs :: H.Statement [Schema] ProcsMap
 allProcs = H.Statement (toS sql) (arrayParam HE.text) decodeProcs True
   where
@@ -197,7 +201,8 @@ procsSqlQuery = [q|
     coalesce(comp.relname, t.typname) as rettype_name,
     p.proretset as rettype_is_setof,
     t.typtype as rettype_typ,
-    p.provolatile
+    p.provolatile,
+    p.proconfig as proc_config
   FROM pg_proc p
     JOIN pg_namespace pn ON pn.oid = p.pronamespace
     JOIN pg_type t ON t.oid = p.prorettype

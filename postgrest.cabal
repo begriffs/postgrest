@@ -156,13 +156,12 @@ test-suite spec
                       Feature.JsonOperatorSpec
                       Feature.NoJwtSpec
                       Feature.NonexistentSchemaSpec
-                      Feature.PgVersion95Spec
-                      Feature.PgVersion96Spec
                       Feature.ProxySpec
                       Feature.QueryLimitedSpec
                       Feature.QuerySpec
                       Feature.RangeSpec
                       Feature.RootSpec
+                      Feature.RpcPreRequestGucsSpec
                       Feature.RpcSpec
                       Feature.SingularSpec
                       Feature.StructureSpec

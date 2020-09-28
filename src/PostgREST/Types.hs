@@ -30,12 +30,17 @@ import Protolude.Conv       (toS)
 -- | Enumeration of currently supported response content types
 data ContentType = CTApplicationJSON | CTSingularJSON
                  | CTTextCSV | CTTextPlain
-                 | CTOpenAPI | CTOctetStream
+                 | CTOpenAPI | CTUrlEncoded | CTOctetStream
                  | CTAny | CTOther ByteString deriving (Show, Eq)
 
 -- | Convert from ContentType to a full HTTP Header
 toHeader :: ContentType -> Header
-toHeader ct = (hContentType, toMime ct <> "; charset=utf-8")
+toHeader ct = (hContentType, toMime ct <> charset)
+  where
+    charset = case ct of
+      CTOctetStream -> mempty
+      CTOther _     -> mempty
+      _             -> "; charset=utf-8"
 
 -- | Convert from ContentType to a ByteString representing the mime type
 toMime :: ContentType -> ByteString
@@ -44,11 +49,13 @@ toMime CTTextCSV         = "text/csv"
 toMime CTTextPlain       = "text/plain"
 toMime CTOpenAPI         = "application/openapi+json"
 toMime CTSingularJSON    = "application/vnd.pgrst.object+json"
+toMime CTUrlEncoded      = "application/x-www-form-urlencoded"
 toMime CTOctetStream     = "application/octet-stream"
 toMime CTAny             = "*/*"
 toMime (CTOther ct)      = ct
 
--- | Convert from ByteString to ContentType. Warning: discards MIME parameters
+-- | Convert from ByteString to ContentType.
+-- | Warning: discards MIME parameters. e.g. On `text/csv;version=1`, the `version=1` part is removed.
 decodeContentType :: BS.ByteString -> ContentType
 decodeContentType ct = case BS.takeWhile (/= BS.c2w ';') ct of
   "application/json"                  -> CTApplicationJSON
@@ -57,6 +64,7 @@ decodeContentType ct = case BS.takeWhile (/= BS.c2w ';') ct of
   "application/openapi+json"          -> CTOpenAPI
   "application/vnd.pgrst.object+json" -> CTSingularJSON
   "application/vnd.pgrst.object"      -> CTSingularJSON
+  "application/x-www-form-urlencoded" -> CTUrlEncoded
   "application/octet-stream"          -> CTOctetStream
   "*/*"                               -> CTAny
   ct'                                 -> CTOther ct'
@@ -139,14 +147,15 @@ data ProcDescription = ProcDescription {
 , pdArgs        :: [PgArg]
 , pdReturnType  :: RetType
 , pdVolatility  :: ProcVolatility
+, pdAccept      :: Maybe Text
 } deriving (Show, Eq)
 
 -- Order by least number of args in the case of overloaded functions
 instance Ord ProcDescription where
-  ProcDescription schema1 name1 des1 args1 rt1 vol1 `compare` ProcDescription schema2 name2 des2 args2 rt2 vol2
+  ProcDescription schema1 name1 des1 args1 rt1 vol1 accept1 `compare` ProcDescription schema2 name2 des2 args2 rt2 vol2 accept2
     | schema1 == schema2 && name1 == name2 && length args1 < length args2  = LT
     | schema2 == schema2 && name1 == name2 && length args1 > length args2  = GT
-    | otherwise = (schema1, name1, des1, args1, rt1, vol1) `compare` (schema2, name2, des2, args2, rt2, vol2)
+    | otherwise = (schema1, name1, des1, args1, rt1, vol1, accept1) `compare` (schema2, name2, des2, args2, rt2, vol2, accept2)
 
 -- | A map of all procs, all of which can be overloaded(one entry will have more than one ProcDescription).
 -- | It uses a HashMap for a faster lookup.

@@ -12,18 +12,24 @@ This project adheres to [Semantic Versioning](http://semver.org/).
  - #1119, Allow config file reloading with SIGUSR2 - @steve-chavez
  - #1558, Allow 'Bearer' with and without capitalization as authentication schema - @wolfgangwalther
  - #1559, No downtime when reloading the schema cache with SIGUSR1 - @steve-chavez
+ - #1582, Allow overriding `Accept` and `Content-Type` on RPC with `pgrst.accept` - @steve-chavez, @Dansvidania, @wolfgangwalther
 
 ### Fixed
 
  - #1530, Fix how the PostgREST version is shown in the help text when the `.git` directory is not available - @monacoremo
  - #1094, Fix expired JWTs starting an empty transaction on the db - @steve-chavez
  - #1475, Fix location header for POST request with select= without PK (#1162) - @wolfgangwalther
+ - #1582, Fix `application/octet-stream` appending `charset=utf-8` - @steve-chavez
 
 ### Changed
 
  - #1522, #1528, #1535, Docker images are now built from scratch based on a the static PostgREST executable (#1494) and with Nix instead of a `Dockerfile`. This reduces the compressed image size from over 30mb to about 4mb - @monacoremo
  - #1475, Location header for POST request is only included when PK is available on the table (#1461) - @wolfgangwalther
  - #1560, Volatile RPC called with GET now returns 405 Method not Allowed instead of 500 - @wolfgangwalther
+
+### Deprecated
+
+- #1582, Deprecate `raw-media-types` config. RPC setting `pgrst.accept` should be used instead - @steve-chavez
 
 ## [7.0.1] - 2020-05-18
 
