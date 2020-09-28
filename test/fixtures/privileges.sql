@@ -130,6 +130,8 @@ GRANT ALL ON TABLE
     , v2.another_table
     , v1.children
     , v2.children
+    , shops
+    , shop_bles
 TO postgrest_test_anonymous;
 
 GRANT INSERT ON TABLE insertonly TO postgrest_test_anonymous;

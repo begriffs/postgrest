@@ -158,6 +158,7 @@ test-suite spec
                       Feature.NonexistentSchemaSpec
                       Feature.PgVersion95Spec
                       Feature.PgVersion96Spec
+                      Feature.PostGISSpec
                       Feature.ProxySpec
                       Feature.QueryLimitedSpec
                       Feature.QuerySpec

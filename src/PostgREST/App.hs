@@ -135,7 +135,7 @@ app dbStructure proc cols conf apiRequest =
                              then limitedQuery cq ((+ 1) <$> maxRows) -- LIMIT maxRows + 1 so we can determine below that maxRows was surpassed
                              else cq
                   stm = createReadStatement q cQuery (contentType == CTSingularJSON) shouldCount
-                        (contentType == CTTextCSV) bField pgVer
+                        (contentType == CTTextCSV) (contentType == CTGeoJSON) bField pgVer
                   explStm = createExplainStatement cq
               row <- H.statement () stm
               let (tableTotal, queryTotal, _ , body, gucHeaders, gucStatus) = row
@@ -168,7 +168,7 @@ app dbStructure proc cols conf apiRequest =
               let pkCols = tablePKCols dbStructure tSchema tName
                   stm = createWriteStatement sq mq
                     (contentType == CTSingularJSON) True
-                    (contentType == CTTextCSV) (iPreferRepresentation apiRequest) pkCols pgVer
+                    (contentType == CTTextCSV) (contentType == CTGeoJSON) (iPreferRepresentation apiRequest) pkCols pgVer
               row <- H.statement (toS $ pjRaw pJson) stm
               let (_, queryTotal, fields, body, gucHeaders, gucStatus) = row
                   gucs =  (,) <$> gucHeaders <*> gucStatus
@@ -201,7 +201,7 @@ app dbStructure proc cols conf apiRequest =
             Left errorResponse -> return errorResponse
             Right (sq, mq) -> do
               let stm = createWriteStatement sq mq
-                    (contentType == CTSingularJSON) False (contentType == CTTextCSV)
+                    (contentType == CTSingularJSON) False (contentType == CTTextCSV) (contentType == CTGeoJSON)
                     (iPreferRepresentation apiRequest) [] pgVer
               row <- H.statement (toS $ pjRaw pJson) stm
               let (_, queryTotal, _, body, gucHeaders, gucStatus) = row
@@ -236,7 +236,7 @@ app dbStructure proc cols conf apiRequest =
               else do
                 row <- H.statement (toS $ pjRaw pJson) $
                        createWriteStatement sq mq (contentType == CTSingularJSON) False
-                                            (contentType == CTTextCSV) (iPreferRepresentation apiRequest) [] pgVer
+                                            (contentType == CTTextCSV) (contentType == CTGeoJSON) (iPreferRepresentation apiRequest) [] pgVer
                 let (_, queryTotal, _, body, gucHeaders, gucStatus) = row
                     gucs =  (,) <$> gucHeaders <*> gucStatus
                 case gucs of
@@ -261,7 +261,7 @@ app dbStructure proc cols conf apiRequest =
             Right (sq, mq) -> do
               let stm = createWriteStatement sq mq
                     (contentType == CTSingularJSON) False
-                    (contentType == CTTextCSV)
+                    (contentType == CTTextCSV) (contentType == CTGeoJSON)
                     (iPreferRepresentation apiRequest) [] pgVer
               row <- H.statement mempty stm
               let (_, queryTotal, _, body, gucHeaders, gucStatus) = row
@@ -303,7 +303,7 @@ app dbStructure proc cols conf apiRequest =
                 preferParams = iPreferParameters apiRequest
                 pq = requestToCallProcQuery qi (specifiedProcArgs cols proc) returnsScalar preferParams returning
                 stm = callProcStatement returnsScalar pq q cq shouldCount (contentType == CTSingularJSON)
-                        (contentType == CTTextCSV) (contentType `elem` rawContentTypes) (preferParams == Just MultipleObjects)
+                        (contentType == CTTextCSV) (contentType == CTGeoJSON) (contentType `elem` rawContentTypes) (preferParams == Just MultipleObjects)
                         bField pgVer
               row <- H.statement (toS $ pjRaw pJson) stm
               let (tableTotal, queryTotal, body, gucHeaders, gucStatus) = row
@@ -380,17 +380,17 @@ responseContentTypeOrError :: [ContentType] -> [ContentType] -> Action -> Target
 responseContentTypeOrError accepts rawContentTypes action target = serves contentTypesForRequest accepts
   where
     contentTypesForRequest = case action of
-      ActionRead _       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
+      ActionRead _       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
                              ++ rawContentTypes
-      ActionCreate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
-      ActionUpdate       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
-      ActionDelete       ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
-      ActionInvoke _     ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
+      ActionCreate       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
+      ActionUpdate       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
+      ActionDelete       ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
+      ActionInvoke _     ->  [CTApplicationJSON, CTSingularJSON, CTGeoJSON, CTTextCSV]
                              ++ rawContentTypes
                              ++ [CTOpenAPI | tpIsRootSpec target]
       ActionInspect _    ->  [CTOpenAPI, CTApplicationJSON]
       ActionInfo         ->  [CTTextCSV]
-      ActionSingleUpsert ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV]
+      ActionSingleUpsert ->  [CTApplicationJSON, CTSingularJSON, CTTextCSV, CTGeoJSON]
     serves sProduces cAccepts =
       case mutuallyAgreeable sProduces cAccepts of
         Nothing -> Left . errorResponseFor . ContentTypeError . map toMime $ cAccepts

@@ -42,10 +42,10 @@ import           Text.InterpolatedString.Perl6   (qc)
 -}
 type ResultsWithCount = (Maybe Int64, Int64, [BS.ByteString], BS.ByteString, Either SimpleError [GucHeader], Either SimpleError (Maybe Status))
 
-createWriteStatement :: SqlQuery -> SqlQuery -> Bool -> Bool -> Bool ->
+createWriteStatement :: SqlQuery -> SqlQuery -> Bool -> Bool -> Bool -> Bool ->
                         PreferRepresentation -> [Text] -> PgVersion ->
                         H.Statement ByteString ResultsWithCount
-createWriteStatement selectQuery mutateQuery wantSingle isInsert asCsv rep pKeys pgVer =
+createWriteStatement selectQuery mutateQuery wantSingle isInsert asCsv asGeoJson rep pKeys pgVer =
   unicodeStatement sql (param HE.unknown) decodeStandard True
  where
   sql = [qc|
@@ -72,6 +72,7 @@ createWriteStatement selectQuery mutateQuery wantSingle isInsert asCsv rep pKeys
   bodyF
     | rep `elem` [None, HeadersOnly] = "''"
     | asCsv = asCsvF
+    | asGeoJson = asGeoJsonF
     | wantSingle = asJsonSingleF
     | otherwise = asJsonF
 
@@ -84,9 +85,9 @@ createWriteStatement selectQuery mutateQuery wantSingle isInsert asCsv rep pKeys
   decodeStandard =
    fromMaybe (Nothing, 0, [], mempty, Right [], Right Nothing) <$> HD.rowMaybe standardRow
 
-createReadStatement :: SqlQuery -> SqlQuery -> Bool -> Bool -> Bool -> Maybe FieldName -> PgVersion ->
+createReadStatement :: SqlQuery -> SqlQuery -> Bool -> Bool -> Bool -> Bool -> Maybe FieldName -> PgVersion ->
                        H.Statement () ResultsWithCount
-createReadStatement selectQuery countQuery isSingle countTotal asCsv binaryField pgVer =
+createReadStatement selectQuery countQuery isSingle countTotal asCsv asGeoJson binaryField pgVer =
   unicodeStatement sql HE.noParams decodeStandard False
  where
   sql = [qc|
@@ -106,6 +107,7 @@ createReadStatement selectQuery countQuery isSingle countTotal asCsv binaryField
 
   bodyF
     | asCsv = asCsvF
+    | asGeoJson = asGeoJsonF
     | isSingle = asJsonSingleF
     | isJust binaryField = asBinaryF $ fromJust binaryField
     | otherwise = asJsonF
@@ -129,9 +131,9 @@ standardRow = (,,,,,) <$> nullableColumn HD.int8 <*> column HD.int8
 type ProcResults = (Maybe Int64, Int64, ByteString, Either SimpleError [GucHeader], Either SimpleError (Maybe Status))
 
 callProcStatement :: Bool -> SqlQuery -> SqlQuery -> SqlQuery -> Bool ->
-                     Bool -> Bool -> Bool -> Bool -> Maybe FieldName -> PgVersion ->
+                     Bool -> Bool -> Bool -> Bool -> Bool -> Maybe FieldName -> PgVersion ->
                      H.Statement ByteString ProcResults
-callProcStatement returnsScalar callProcQuery selectQuery countQuery countTotal isSingle asCsv asBinary multObjects binaryField pgVer =
+callProcStatement returnsScalar callProcQuery selectQuery countQuery countTotal isSingle asCsv asGeoJson asBinary multObjects binaryField pgVer =
   unicodeStatement sql (param HE.unknown) decodeProc True
   where
     sql = [qc|
@@ -150,6 +152,7 @@ callProcStatement returnsScalar callProcQuery selectQuery countQuery countTotal 
     bodyF
      | returnsScalar = scalarBodyF
      | isSingle     = asJsonSingleF
+     | asGeoJson = asGeoJsonF
      | asCsv = asCsvF
      | isJust binaryField = asBinaryF $ fromJust binaryField
      | otherwise = asJsonF

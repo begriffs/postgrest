@@ -28,7 +28,7 @@ import Protolude            hiding (toS)
 import Protolude.Conv       (toS)
 
 -- | Enumeration of currently supported response content types
-data ContentType = CTApplicationJSON | CTSingularJSON
+data ContentType = CTApplicationJSON | CTSingularJSON | CTGeoJSON
                  | CTTextCSV | CTTextPlain
                  | CTOpenAPI | CTOctetStream
                  | CTAny | CTOther ByteString deriving (Show, Eq)
@@ -40,6 +40,7 @@ toHeader ct = (hContentType, toMime ct <> "; charset=utf-8")
 -- | Convert from ContentType to a ByteString representing the mime type
 toMime :: ContentType -> ByteString
 toMime CTApplicationJSON = "application/json"
+toMime CTGeoJSON         = "application/geo+json"
 toMime CTTextCSV         = "text/csv"
 toMime CTTextPlain       = "text/plain"
 toMime CTOpenAPI         = "application/openapi+json"
@@ -52,6 +53,7 @@ toMime (CTOther ct)      = ct
 decodeContentType :: BS.ByteString -> ContentType
 decodeContentType ct = case BS.takeWhile (/= BS.c2w ';') ct of
   "application/json"                  -> CTApplicationJSON
+  "application/geo+json"              -> CTGeoJSON
   "text/csv"                          -> CTTextCSV
   "text/plain"                        -> CTTextPlain
   "application/openapi+json"          -> CTOpenAPI
