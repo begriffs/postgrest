@@ -6,7 +6,7 @@ Description : Sets CORS policy. Also the PostgreSQL GUCs, role, search_path and 
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module PostgREST.Middleware where
+module PostgREST.Middleware (runPgLocals, pgrstMiddleware) where
 
 import qualified Hasql.Decoders                    as HD
 import qualified Hasql.DynamicStatements.Statement as H
@@ -81,21 +81,21 @@ logger logLevel app req sendResponse = app req $ \res ->
     LogError | status >= status500 -> logRequest
     _                              -> sendResponse res
 
-defaultCorsPolicy :: CorsResourcePolicy
-defaultCorsPolicy =  CorsResourcePolicy Nothing
-  ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"] ["Authorization"] Nothing
-  (Just $ 60*60*24) False False True
-
 -- | CORS policy to be used in by Wai Cors middleware
 corsPolicy :: Request -> Maybe CorsResourcePolicy
 corsPolicy req = case lookup "origin" headers of
-  Just origin -> Just defaultCorsPolicy {
-      corsOrigins = Just ([origin], True)
-    , corsRequestHeaders = "Authentication":accHeaders
-    , corsExposedHeaders = Just [
-        "Content-Encoding", "Content-Location", "Content-Range", "Content-Type"
-      , "Date", "Location", "Server", "Transfer-Encoding", "Range-Unit"
-      ]
+  Just origin ->
+    Just CorsResourcePolicy
+    { corsOrigins = Just ([origin], True)
+    , corsMethods = ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"]
+    , corsRequestHeaders = "Authorization":accHeaders
+    , corsExposedHeaders = Just
+      [ "Content-Encoding", "Content-Location", "Content-Range", "Content-Type"
+      , "Date", "Location", "Server", "Transfer-Encoding", "Range-Unit"]
+    , corsMaxAge = Just $ 60*60*24
+    , corsVaryOrigin = False
+    , corsRequireOrigin = False
+    , corsIgnoreFailures = True
     }
   Nothing -> Nothing
   where
