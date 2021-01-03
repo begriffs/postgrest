@@ -15,7 +15,6 @@ import           PostgREST.Private.Common
 import qualified Data.Aeson                as JSON
 import qualified Data.ByteString.Char8     as BS
 import qualified Data.CaseInsensitive      as CI
-import           Data.Function             (id)
 import qualified Data.HashMap.Strict       as M
 import           Data.List                 (lookup)
 import           Data.Scientific           (FPFormat (..),
@@ -23,10 +22,7 @@ import           Data.Scientific           (FPFormat (..),
                                             isInteger)
 import qualified Data.Text                 as T
 import qualified Hasql.Transaction         as H
-import           Network.HTTP.Types.Status (Status, status400,
-                                            status500, statusCode)
-import           Network.Wai.Logger        (showSockAddr)
-import           System.Log.FastLogger     (toLogStr)
+import           Network.HTTP.Types.Status (status400, status500)
 
 import Network.Wai
 import Network.Wai.Middleware.Cors          (CorsResourcePolicy (..),
@@ -40,7 +36,6 @@ import PostgREST.QueryBuilder (setConfigLocal)
 import PostgREST.Types        (LogLevel (..))
 import Protolude              hiding (head, toS)
 import Protolude.Conv         (toS)
-import System.IO.Unsafe       (unsafePerformIO)
 
 -- | Runs local(transaction scoped) GUCs for every request, plus the pre-request function
 runPgLocals :: AppConfig   -> M.HashMap Text JSON.Value ->
@@ -68,46 +63,23 @@ runPgLocals conf claims app req = do
       setConfigLocal mempty ("search_path", schemas)
     preReqSql = (\f -> "select " <> toS f <> "();") <$> configDbPreRequest conf
 
--- | Log in apache format. Only requests that have a status greater than minStatus are logged.
--- | There's no way to filter logs in the apache format on wai-extra: https://hackage.haskell.org/package/wai-extra-3.0.29.2/docs/Network-Wai-Middleware-RequestLogger.html#t:OutputFormat.
--- | So here we copy wai-logger apacheLogStr function: https://github.com/kazu-yamamoto/logger/blob/a4f51b909a099c51af7a3f75cf16e19a06f9e257/wai-logger/Network/Wai/Logger/Apache.hs#L45
--- | TODO: Add the ability to filter apache logs on wai-extra and remove this function.
-pgrstFormat :: Status -> OutputFormatter
-pgrstFormat minStatus date req status responseSize =
-  if status < minStatus
-    then mempty
-  else toLogStr (getSourceFromSocket req)
-    <> " - - ["
-    <> toLogStr date
-    <> "] \""
-    <> toLogStr (requestMethod req)
-    <> " "
-    <> toLogStr (rawPathInfo req <> rawQueryString req)
-    <> " "
-    <> toLogStr (show (httpVersion req)::Text)
-    <> "\" "
-    <> toLogStr (show (statusCode status)::Text)
-    <> " "
-    <> toLogStr (maybe "-" show responseSize::Text)
-    <> " \""
-    <> toLogStr (fromMaybe mempty $ requestHeaderReferer req)
-    <> "\" \""
-    <> toLogStr (fromMaybe mempty $ requestHeaderUserAgent req)
-    <> "\"\n"
-  where
-    getSourceFromSocket = BS.pack . showSockAddr . remoteHost
-
-pgrstMiddleware :: LogLevel -> Application -> Application
+pgrstMiddleware :: LogLevel -> Middleware
 pgrstMiddleware logLevel =
-    logger
+    logger logLevel
   . gzip def
   . cors corsPolicy
-  where
-    logger = case logLevel of
-      LogCrit  -> id
-      LogError -> unsafePerformIO $ mkRequestLogger def { outputFormat = CustomOutputFormat $ pgrstFormat status500}
-      LogWarn  -> unsafePerformIO $ mkRequestLogger def { outputFormat = CustomOutputFormat $ pgrstFormat status400}
-      LogInfo  -> logStdout
+
+logger :: LogLevel -> Middleware
+logger logLevel app req sendResponse = app req $ \res ->
+  let
+    status = responseStatus res
+    logRequest = logStdout app req sendResponse
+  in
+  case logLevel of
+    LogInfo                        -> logRequest
+    LogWarn  | status >= status400 -> logRequest
+    LogError | status >= status500 -> logRequest
+    _                              -> sendResponse res
 
 defaultCorsPolicy :: CorsResourcePolicy
 defaultCorsPolicy =  CorsResourcePolicy Nothing
