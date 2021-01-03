@@ -63,6 +63,13 @@ runPgLocals conf claims app req = do
       setConfigLocal mempty ("search_path", schemas)
     preReqSql = (\f -> "select " <> toS f <> "();") <$> configDbPreRequest conf
 
+    unquoted :: JSON.Value -> Text
+    unquoted (JSON.String t) = t
+    unquoted (JSON.Number n) =
+      toS $ formatScientific Fixed (if isInteger n then Just 0 else Nothing) n
+    unquoted (JSON.Bool b) = show b
+    unquoted v = toS $ JSON.encode v
+
 pgrstMiddleware :: LogLevel -> Middleware
 pgrstMiddleware logLevel =
     logger logLevel
@@ -103,10 +110,3 @@ corsPolicy req = case lookup "origin" headers of
     accHeaders = case lookup "access-control-request-headers" headers of
       Just hdrs -> map (CI.mk . toS . T.strip . toS) $ BS.split ',' hdrs
       Nothing -> []
-
-unquoted :: JSON.Value -> Text
-unquoted (JSON.String t) = t
-unquoted (JSON.Number n) =
-  toS $ formatScientific Fixed (if isInteger n then Just 0 else Nothing) n
-unquoted (JSON.Bool b) = show b
-unquoted v = toS $ JSON.encode v
