@@ -33,7 +33,6 @@ import Network.Wai.Middleware.Cors          (CorsResourcePolicy (..),
                                              cors)
 import Network.Wai.Middleware.Gzip          (def, gzip)
 import Network.Wai.Middleware.RequestLogger
-import Network.Wai.Middleware.Static        (only, staticPolicy)
 
 import PostgREST.ApiRequest   (ApiRequest (..))
 import PostgREST.Config       (AppConfig (..))
@@ -103,7 +102,6 @@ pgrstMiddleware logLevel =
     logger
   . gzip def
   . cors corsPolicy
-  . staticPolicy (only [("favicon.ico", "static/favicon.ico")])
   where
     logger = case logLevel of
       LogCrit  -> id
