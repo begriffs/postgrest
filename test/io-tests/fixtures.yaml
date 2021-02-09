@@ -144,6 +144,7 @@ roleclaims:
     data:
       postgrest:
         a_role: postgrest_test_author
+      other: claims
     expected_status: 200
   - key: '.customObject.manyRoles[1]'
     data:
@@ -151,21 +152,25 @@ roleclaims:
         manyRoles:
           - other
           - postgrest_test_author
+      other: {}
     expected_status: 200
   - key: '."https://www.example.com/roles"[0].value'
     data:
       'https://www.example.com/roles':
         - value: postgrest_test_author
+      other: 666
     expected_status: 200
   - key: '.myDomain[3]'
     data:
       myDomain:
         - other
         - postgrest_test_author
+      other: 1.23
     expected_status: 401
   - key: '.myRole'
     data:
       role: postgrest_test_author
+      other: true
     expected_status: 401
 
 invalidroleclaimkeys:
