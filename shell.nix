@@ -27,6 +27,7 @@ let
     [
       postgrest.cabalTools
       postgrest.devTools
+      postgrest.loadtest
       postgrest.nixpkgsTools
       postgrest.style
       postgrest.tests

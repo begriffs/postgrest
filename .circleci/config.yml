@@ -178,7 +178,7 @@ jobs:
             cachix use postgrest
       - run:
           name: Install testing scripts
-          command: nix-env -f default.nix -iA tests memory withTools
+          command: nix-env -f default.nix -iA tests memory withTools loadtest
       - run:
           name: Run coverage (io tests and spec tests against PostgreSQL 13)
           command: postgrest-coverage
@@ -219,6 +219,10 @@ jobs:
       - run:
           name: Check the spec tests for idempotence
           command: postgrest-test-spec-idempotence
+          when: always
+      - run:
+          name: Run load test
+          command: postgrest-loadtest-against main
           when: always
       - run:
           name: Run memory tests
