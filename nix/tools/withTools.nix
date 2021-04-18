@@ -27,7 +27,7 @@ let
             "ARG_USE_ENV([PGRST_DB_SCHEMAS], [test], [Schema to expose])"
             "ARG_USE_ENV([PGRST_DB_ANON_ROLE], [postgrest_test_anonymous], [Anonymous PG role])"
           ];
-        addCommandCompletion = true;
+        positionalCompletion = "_command";
         inRootDir = true;
         redirectTixFiles = false;
         withTmpDir = true;
@@ -123,7 +123,7 @@ let
             "ARG_POSITIONAL_SINGLE([command], [Command to run])"
             "ARG_LEFTOVERS([command arguments])"
           ];
-        addCommandCompletion = true;
+        positionalCompletion = "_command";
         inRootDir = true;
       }
       (lib.concatStringsSep "\n\n" runners);
@@ -132,9 +132,12 @@ let
   withVersions = builtins.map withTmpDb postgresqlVersions;
 
   withGit =
+    let
+      name = "postgrest-with-git";
+    in
     checkedShellScript
       {
-        name = "postgrest-with-git";
+        inherit name;
         docs =
           ''
             Create a new worktree of the postgrest repo in a temporary directory and
@@ -146,7 +149,14 @@ let
             "ARG_POSITIONAL_SINGLE([command], [Command to run])"
             "ARG_LEFTOVERS([command arguments])"
           ];
-        addCommandCompletion = true; # TODO: first positional argument needs git commit completion
+        positionalCompletion =
+          ''
+            if test "$prev" == "${name}"; then
+              __gitcomp_nl "$(__git_refs)"
+            else
+              _command_offset 2
+            fi
+          '';
         inRootDir = true;
       }
       ''
@@ -208,7 +218,7 @@ let
             "ARG_POSITIONAL_SINGLE([command], [Command to run])"
             "ARG_LEFTOVERS([command arguments])"
           ];
-        addCommandCompletion = true;
+        positionalCompletion = "_command";
         inRootDir = true;
         withEnv = postgrest.env;
         withTmpDir = true;

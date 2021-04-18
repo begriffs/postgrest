@@ -55,9 +55,12 @@ let
       '';
 
   loadtestAgainst =
+    let
+      name = "postgrest-loadtest-against";
+    in
     checkedShellScript
       {
-        name = "postgrest-loadtest-against";
+        inherit name;
         docs =
           ''
             Run the vegeta loadtest twice:
@@ -68,6 +71,12 @@ let
           "ARG_POSITIONAL_SINGLE([target], [Commit-ish reference to compare with])"
           "ARG_LEFTOVERS([additional vegeta arguments])"
         ];
+        positionalCompletion =
+          ''
+            if test "$prev" == "${name}"; then
+              __gitcomp_nl "$(__git_refs)"
+            fi
+          '';
         inRootDir = true;
       }
       ''
