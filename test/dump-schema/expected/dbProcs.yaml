@@ -1,0 +1,1601 @@
+- - qiName: varied_arguments
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: double
+        pgaReq: true
+        pgaType: double precision
+        pgaVar: false
+      - pgaName: varchar
+        pgaReq: true
+        pgaType: character varying
+        pgaVar: false
+      - pgaName: boolean
+        pgaReq: true
+        pgaType: boolean
+        pgaVar: false
+      - pgaName: date
+        pgaReq: true
+        pgaType: date
+        pgaVar: false
+      - pgaName: money
+        pgaReq: true
+        pgaType: money
+        pgaVar: false
+      - pgaName: enum
+        pgaReq: true
+        pgaType: test.enum_menagerie_type
+        pgaVar: false
+      - pgaName: arr
+        pgaReq: true
+        pgaType: text[]
+        pgaVar: false
+      - pgaName: integer
+        pgaReq: false
+        pgaType: integer
+        pgaVar: false
+      - pgaName: json
+        pgaReq: false
+        pgaType: json
+        pgaVar: false
+      - pgaName: jsonb
+        pgaReq: false
+        pgaType: jsonb
+        pgaVar: false
+      pdDescription: 'An RPC function
+
+
+        Just a test for RPC function arguments'
+      pdHasVariadic: false
+      pdName: varied_arguments
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: welcome
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: welcome
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: set_cookie_twice
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: set_cookie_twice
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: ret_base64_bin
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_base64_bin
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: three_defaults
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: a
+        pgaReq: false
+        pgaType: integer
+        pgaVar: false
+      - pgaName: b
+        pgaReq: false
+        pgaType: integer
+        pgaVar: false
+      - pgaName: c
+        pgaReq: false
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: three_defaults
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: single_article
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: id
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: single_article
+      pdReturnType:
+        contents:
+          contents:
+            qiName: articles
+            qiSchema: test
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: reload_pgrst_config
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: reload_pgrst_config
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: welcome.html
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: welcome.html
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: ret_scalars
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_scalars
+      pdReturnType:
+        contents:
+          contents:
+            qiName: record
+            qiSchema: pg_catalog
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: many_out_params
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: many_out_params
+      pdReturnType:
+        contents:
+          contents:
+            qiName: record
+            qiSchema: pg_catalog
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: overloaded
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: overloaded
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+    - pdArgs:
+      - pgaName: ''
+        pgaReq: true
+        pgaType: json
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: overloaded
+      pdReturnType:
+        contents:
+          contents:
+            qiName: record
+            qiSchema: pg_catalog
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+    - pdArgs:
+      - pgaName: a
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      - pgaName: b
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: overloaded
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+    - pdArgs:
+      - pgaName: a
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      - pgaName: b
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      - pgaName: c
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: overloaded
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: welcome_twice
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: welcome_twice
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: raise_pt402
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: raise_pt402
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: getallprojects
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: getallprojects
+      pdReturnType:
+        contents:
+          contents:
+            qiName: projects
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: json_argument
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: arg
+        pgaReq: true
+        pgaType: json
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: json_argument
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: getproject_domain
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: id
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: getproject_domain
+      pdReturnType:
+        contents:
+          contents:
+            qiName: projects
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Stable
+
+- - qiName: single_json_out_param
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: a
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      - pgaName: b
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: single_json_out_param
+      pdReturnType:
+        contents:
+          contents:
+            qiName: json
+            qiSchema: pg_catalog
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: bad_guc_headers_1
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: bad_guc_headers_1
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: reveal_big_jwt
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: reveal_big_jwt
+      pdReturnType:
+        contents:
+          contents:
+            qiName: record
+            qiSchema: pg_catalog
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Stable
+
+- - qiName: ret_range
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: low
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      - pgaName: up
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_range
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: get_projects_below
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: id
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: get_projects_below
+      pdReturnType:
+        contents:
+          contents:
+            qiName: projects
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: test_empty_rowset
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: test_empty_rowset
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: noparamsproc
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: noparamsproc
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: problem
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: problem
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: getproject
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: id
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: getproject
+      pdReturnType:
+        contents:
+          contents:
+            qiName: projects
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: login
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: id
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      - pgaName: pass
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: login
+      pdReturnType:
+        contents:
+          contents:
+            qiName: jwt_token
+            qiSchema: public
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Stable
+
+- - qiName: ret_composite_domain
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_composite_domain
+      pdReturnType:
+        contents:
+          contents:
+            qiName: point_2d
+            qiSchema: test
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: callcounter
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: callcounter
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: ret_point_overloaded
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: ''
+        pgaReq: true
+        pgaType: json
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_point_overloaded
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+    - pdArgs:
+      - pgaName: x
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      - pgaName: y
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_point_overloaded
+      pdReturnType:
+        contents:
+          contents:
+            qiName: point_2d
+            qiSchema: test
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: test
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: test
+      pdReturnType:
+        contents:
+          contents:
+            qiName: record
+            qiSchema: pg_catalog
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: root
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: root
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: change_max_rows_config
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: val
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      - pgaName: notify
+        pgaReq: false
+        pgaType: boolean
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: change_max_rows_config
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: ret_setof_integers
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_setof_integers
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+    - pdArgs:
+      - pgaName: ''
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      - pgaName: ''
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_setof_integers
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: reset_max_rows_config
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: reset_max_rows_config
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: sayhello_variadic
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: name
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      - pgaName: v
+        pgaReq: true
+        pgaType: text[]
+        pgaVar: true
+      pdDescription: null
+      pdHasVariadic: true
+      pdName: sayhello_variadic
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: send_body_status_403
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: send_body_status_403
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: anti_id
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: ''
+        pgaReq: true
+        pgaType: test.items
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: anti_id
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: always_true
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: ''
+        pgaReq: true
+        pgaType: test.items
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: always_true
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: ret_void
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_void
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: ret_enum
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: val
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_enum
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: validate_json_schema
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: schema
+        pgaReq: true
+        pgaType: jsonb
+        pgaVar: false
+      - pgaName: data
+        pgaReq: true
+        pgaType: jsonb
+        pgaVar: false
+      - pgaName: root_schema
+        pgaReq: false
+        pgaType: jsonb
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: validate_json_schema
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: is_first
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: ''
+        pgaReq: true
+        pgaType: test.items
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: is_first
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: raise_bad_pt
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: raise_bad_pt
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: get_projects_above
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: id
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: get_projects_above
+      pdReturnType:
+        contents:
+          contents:
+            qiName: projects
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: status_205_for_updated_stuff
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: status_205_for_updated_stuff
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: send_bad_status
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: send_bad_status
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: ret_rows_with_base64_bin
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_rows_with_base64_bin
+      pdReturnType:
+        contents:
+          contents:
+            qiName: images_base64
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: is_valid_isbn
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: input
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: is_valid_isbn
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: add_them
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: a
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      - pgaName: b
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: add_them
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: switch_role
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: switch_role
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: ret_point_2d
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_point_2d
+      pdReturnType:
+        contents:
+          contents:
+            qiName: point_2d
+            qiSchema: test
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: invalid_role_claim_key_reload
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: invalid_role_claim_key_reload
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: sayhello
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: name
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: sayhello
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: get_guc_value
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: name
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: get_guc_value
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: getitemrange
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: min
+        pgaReq: true
+        pgaType: bigint
+        pgaVar: false
+      - pgaName: max
+        pgaReq: true
+        pgaType: bigint
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: getitemrange
+      pdReturnType:
+        contents:
+          contents:
+            qiName: items
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Stable
+
+- - qiName: setprojects
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: id_l
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      - pgaName: id_h
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      - pgaName: name
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: setprojects
+      pdReturnType:
+        contents:
+          contents:
+            qiName: projects
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: location_for_stuff
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: location_for_stuff
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: ret_domain
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: val
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_domain
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: quotedFunction
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: user
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      - pgaName: fullName
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      - pgaName: SSN
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: quotedFunction
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: single_inout_param
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: num
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: single_inout_param
+      pdReturnType:
+        contents:
+          contents:
+            qiName: int4
+            qiSchema: pg_catalog
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: leak
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: blob
+        pgaReq: true
+        pgaType: bytea
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: leak
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: variadic_param
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: v
+        pgaReq: false
+        pgaType: text[]
+        pgaVar: true
+      pdDescription: null
+      pdHasVariadic: true
+      pdName: variadic_param
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: single_out_param
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: num
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: single_out_param
+      pdReturnType:
+        contents:
+          contents:
+            qiName: int4
+            qiSchema: pg_catalog
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: get_tsearch
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: get_tsearch
+      pdReturnType:
+        contents:
+          contents:
+            qiName: tsearch
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: file_fdw_handler
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: file_fdw_handler
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: get_int_and_guc_headers
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: num
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: get_int_and_guc_headers
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: many_inout_params
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: num
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      - pgaName: str
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      - pgaName: b
+        pgaReq: false
+        pgaType: boolean
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: many_inout_params
+      pdReturnType:
+        contents:
+          contents:
+            qiName: record
+            qiSchema: pg_catalog
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: computed_overload
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: ''
+        pgaReq: true
+        pgaType: test.items
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: computed_overload
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+    - pdArgs:
+      - pgaName: ''
+        pgaReq: true
+        pgaType: test.items2
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: computed_overload
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: privileged_hello
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: name
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: privileged_hello
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: get_current_user
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: get_current_user
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Stable
+
+- - qiName: search
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: id
+        pgaReq: true
+        pgaType: bigint
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: search
+      pdReturnType:
+        contents:
+          contents:
+            qiName: items
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Stable
+
+- - qiName: get_projects_and_guc_headers
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: get_projects_and_guc_headers
+      pdReturnType:
+        contents:
+          contents:
+            qiName: projects
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: bad_guc_headers_3
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: bad_guc_headers_3
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: test_arg
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: my_arg
+        pgaReq: true
+        pgaType: public.my_type
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: test_arg
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: reset_invalid_role_claim_key
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: reset_invalid_role_claim_key
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: ret_array
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_array
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: getallusers
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: getallusers
+      pdReturnType:
+        contents:
+          contents:
+            qiName: users
+            qiSchema: test
+          tag: Composite
+        tag: SetOf
+      pdSchema: test
+      pdVolatility: Stable
+
+- - qiName: reset_sequence
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: name
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      - pgaName: value
+        pgaReq: true
+        pgaType: integer
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: reset_sequence
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: singlejsonparam
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: single_param
+        pgaReq: true
+        pgaType: json
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: singlejsonparam
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: file_fdw_validator
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: ''
+        pgaReq: true
+        pgaType: text[]
+        pgaVar: false
+      - pgaName: ''
+        pgaReq: true
+        pgaType: oid
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: file_fdw_validator
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: ret_point_3d
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_point_3d
+      pdReturnType:
+        contents:
+          contents:
+            qiName: point_3d
+            qiSchema: private
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: custom_headers
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: custom_headers
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: jwt_test
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: jwt_test
+      pdReturnType:
+        contents:
+          contents:
+            qiName: jwt_token
+            qiSchema: public
+          tag: Composite
+        tag: Single
+      pdSchema: test
+      pdVolatility: Immutable
+
+- - qiName: bad_guc_headers_2
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: bad_guc_headers_2
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: change_db_schema_and_full_reload
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: schemas
+        pgaReq: true
+        pgaType: text
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: change_db_schema_and_full_reload
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: number_of_labels
+    qiSchema: test
+  - - pdArgs:
+      - pgaName: ''
+        pgaReq: true
+        pgaType: test.ltree_sample
+        pgaVar: false
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: number_of_labels
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile
+
+- - qiName: ret_null
+    qiSchema: test
+  - - pdArgs: []
+      pdDescription: null
+      pdHasVariadic: false
+      pdName: ret_null
+      pdReturnType:
+        contents:
+          tag: Scalar
+        tag: Single
+      pdSchema: test
+      pdVolatility: Volatile

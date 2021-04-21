@@ -218,7 +218,10 @@ jobs:
           name: Run memory tests
           command: postgrest-test-memory
           when: always
-
+      - run:
+          name: Check that the expected DbStructure schema is dumped
+          command: postgrest-dump-schema-check
+          when: always
 
 workflows:
   version: 2

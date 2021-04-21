@@ -1,0 +1,783 @@
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: items
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: items2
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: items3
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: consumers_extra_view
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: consumers_view
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: consumers_view_view
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: orders_view
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: clients
+    tableSchema: test
+
+- pkName: k1
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: compound_pk
+    tableSchema: test
+
+- pkName: k1
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: compound_pk_view
+    tableSchema: test
+
+- pkName: k2
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: compound_pk
+    tableSchema: test
+
+- pkName: k2
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: compound_pk_view
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: only_pk
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: projects
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: false
+    tableName: materialized_projects
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: projects_view
+    tableSchema: test
+
+- pkName: t_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: projects_view_alt
+    tableSchema: test
+
+- pkName: k
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: simple_pk
+    tableSchema: test
+
+- pkName: k
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: simple_pk2
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: users
+    tableSchema: test
+
+- pkName: project_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: users_projects
+    tableSchema: test
+
+- pkName: user_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: users_projects
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: tasks
+    tableSchema: test
+
+- pkName: myId
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: filtered_tasks
+    tableSchema: test
+
+- pkName: task_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: users_tasks
+    tableSchema: test
+
+- pkName: user_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: users_tasks
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: comments
+    tableSchema: test
+
+- pkName: project_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: files
+    tableSchema: test
+
+- pkName: filename
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: files
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: articles
+    tableSchema: test
+
+- pkName: articleId
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: articleStars
+    tableSchema: test
+
+- pkName: article_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: limited_article_stars
+    tableSchema: test
+
+- pkName: userId
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: articleStars
+    tableSchema: test
+
+- pkName: user_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: limited_article_stars
+    tableSchema: test
+
+- pkName: so6meIdColumn
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: Escap3e;
+    tableSchema: test
+
+- pkName: secret
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: authors_only
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: auto_incrementing_pk
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: complex_items
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: has_fk
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: false
+    tableName: insertable_view_with_join
+    tableSchema: test
+
+- pkName: integer
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: menagerie
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: entities
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: child_entities
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: grandchild_entities
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: ranges
+    tableSchema: test
+
+- pkName: being
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: being
+    tableSchema: test
+
+- pkName: descendant
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: descendant
+    tableSchema: test
+
+- pkName: part
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: part
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: leak
+    tableSchema: test
+
+- pkName: first_name
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: employees
+    tableSchema: test
+
+- pkName: last_name
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: employees
+    tableSchema: test
+
+- pkName: name
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: tiobe_pls
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: family_tree
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: managers
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: organizations
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: authors
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: authors_books_number
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: authors_have_book_in_decade
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: authors_have_book_in_decade2
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: authors_w_entities
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: books
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: fifties_books
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: false
+    tableName: forties_and_fifties_books
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: forties_books
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: false
+    tableName: odd_years_publications
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: sixties_books
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: person
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: false
+    tableName: person_detail
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: message
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: space
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: zone
+    tableSchema: test
+
+- pkName: idUnitTest
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: UnitTest
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: json_arr
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: jsonb_test
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: Foo
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: foos
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: bar
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: bars
+    tableSchema: test
+
+- pkName: last_name
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: player_view
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: player_view
+    tableSchema: test
+
+- pkName: first_name
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: player_view
+    tableSchema: test
+
+- pkName: birth_date
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: player_view
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: web_content
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: app_users
+    tableSchema: test
+
+- pkName: big_project_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: big_projects
+    tableSchema: test
+
+- pkName: site_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: sites
+    tableSchema: test
+
+- pkName: film_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: personnages
+    tableSchema: test
+
+- pkName: role_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: personnages
+    tableSchema: test
+
+- pkName: job_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: jobs
+    tableSchema: test
+
+- pkName: job_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: main_jobs
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: whatev_projects
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: whatev_sites
+    tableSchema: test
+
+- pkName: job_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: whatev_jobs
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: agents
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: departments
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: schedules
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: activities
+    tableSchema: test
+
+- pkName: schedule_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: activities
+    tableSchema: test
+
+- pkName: unit_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: unit_workdays
+    tableSchema: test
+
+- pkName: day
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: unit_workdays
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: stuff
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: loc_test
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: screens
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: labels
+    tableSchema: test
+
+- pkName: label_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: label_screen
+    tableSchema: test
+
+- pkName: screen_id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: label_screen
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: actors
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: films
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: end_1
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: end_2
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: schauspieler
+    tableSchema: test
+
+- pkName: id
+  pkTable:
+    tableDescription: null
+    tableInsertable: true
+    tableName: filme
+    tableSchema: test

@@ -3,6 +3,7 @@
 , checkedShellScript
 , devCabalOptions
 , ghc
+, git
 , glibcLocales
 , gnugrep
 , haskell
@@ -154,6 +155,36 @@ let
         sed -i 's|^module \(.*\):|module \1/|g' test/coverage.overlay
       '';
 
+  dumpSchemaUpdatePython =
+    python3.withPackages (ps: [ ps.pyyaml ]);
+
+  dumpSchemaUpdate =
+    checkedShellScript
+      {
+        name = "postgrest-dump-schema-update";
+        docs = "Update the dumped schema.";
+        inRootDir = true;
+        withEnv = postgrest.env;
+      }
+      ''
+        ${withTools.latest} \
+            ${cabal-install}/bin/cabal v2-exec ${devCabalOptions} --verbose=0 -- \
+            ${dumpSchemaUpdatePython}/bin/python test/dump-schema/update.py
+      '';
+
+  dumpSchemaCheck =
+    checkedShellScript
+      {
+        name = "postgrest-dump-schema-check";
+        docs = "Check whether re-dumping the schema results in any changes.";
+        inRootDir = true;
+      }
+      ''
+        ${dumpSchemaUpdate}
+        ${git}/bin/git add test/dump-schema/expected
+        ${git}/bin/git diff-index --cached -p --exit-code HEAD
+      '';
+
 in
 buildToolbox
 {
@@ -166,5 +197,7 @@ buildToolbox
       dumpSchema
       coverage
       coverageDraftOverlay
+      dumpSchemaUpdate
+      dumpSchemaCheck
     ];
 }

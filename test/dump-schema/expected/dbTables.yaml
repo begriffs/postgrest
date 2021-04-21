@@ -1,0 +1,674 @@
+- tableDescription: null
+  tableInsertable: true
+  tableName: Escap3e;
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: Foo
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: Server Today
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: UnitTest
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: activities
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: actors
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: addresses
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: agents
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: app_users
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: articleStars
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: articles
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: authors
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: authors_books_number
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: authors_have_book_in_decade
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: authors_have_book_in_decade2
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: authors_only
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: authors_w_entities
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: auto_incrementing_pk
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: bar
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: bars
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: being
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: being_part
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: big_projects
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: books
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: child_entities
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: clashing_column
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: clients
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: comments
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: complex_items
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: compound_pk
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: compound_pk_view
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: compound_unique
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: consumers_extra_view
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: consumers_view
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: consumers_view_view
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: contract
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: contract_view
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: departments
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: descendant
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: employees
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: empty_table
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: end_1
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: end_2
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: entities
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: family_tree
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: fifties_books
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: files
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: filme
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: films
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: filtered_tasks
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: foos
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: forties_and_fifties_books
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: forties_books
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: get_projects_above_view
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: getallprojects_view
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: ghostBusters
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: grandchild_entities
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: has_count_column
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: has_fk
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: images
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: images_base64
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: insertable_view_with_join
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: insertonly
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: isn_sample
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: items
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: items2
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: items3
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: items_with_different_col_types
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: jobs
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: json_arr
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: json_table
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: jsonb_test
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: label_screen
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: labels
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: leak
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: limited_article_stars
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: loc_test
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: ltree_sample
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: main_jobs
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: managers
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: materialized_projects
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: materialized_view
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: menagerie
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: message
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: no_pk
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: nullable_integer
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: odd_years_publications
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: only_pk
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: openapi_types
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: orders
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: orders_view
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: organizations
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: pages
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: part
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: perf_articles
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: person
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: person_detail
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: personnages
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: pgrst_reserved_chars
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: player_view
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: prepared_statements
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: private_table
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: projects
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: projects_count_grouped_by
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: false
+  tableName: projects_dump
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: projects_view
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: projects_view_alt
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: ranges
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: referrals
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: rollen
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: schauspieler
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: schedules
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: screens
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: simple_pk
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: simple_pk2
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: single_unique
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: sites
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: sixties_books
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: space
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: stuff
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: tasks
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: tiobe_pls
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: touched_files
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: tsearch
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: unit_workdays
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: users
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: users_projects
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: users_tasks
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: w_or_wo_comma_names
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: web_content
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: whatev_jobs
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: whatev_projects
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: whatev_sites
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: withUnique
+  tableSchema: test
+
+- tableDescription: null
+  tableInsertable: true
+  tableName: zone
+  tableSchema: test
