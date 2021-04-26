@@ -25,7 +25,7 @@ let
                                      -max-workers 1 \
                                      -workers 1 \
                                      -rate 0 \
-                                     -duration 5s \
+                                     -duration 60s \
                                      "''${_arg_leftovers[@]}" \
           | ${vegeta}/bin/vegeta encode
       '';
