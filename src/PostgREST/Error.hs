@@ -61,6 +61,7 @@ data ApiRequestError
   | UnacceptableSchema [Text]
   | ContentTypeError [ByteString]
   | UnsupportedVerb                -- Unreachable?
+  | PutRangeNotAllowedError
 
 instance PgrstError ApiRequestError where
   status InvalidRange            = HT.status416
@@ -73,6 +74,7 @@ instance PgrstError ApiRequestError where
   status AmbiguousRelBetween{}   = HT.status300
   status (UnacceptableSchema _)  = HT.status406
   status (ContentTypeError _)    = HT.status415
+  status PutRangeNotAllowedError = HT.status400
 
   headers _ = [ContentType.toHeader CTApplicationJSON]
 
@@ -99,6 +101,8 @@ instance JSON.ToJSON ApiRequestError where
     "message" .= ("The schema must be one of the following: " <> T.intercalate ", " schemas)]
   toJSON (ContentTypeError cts)    = JSON.object [
     "message" .= ("None of these Content-Types are available: " <> (toS . intercalate ", " . map toS) cts :: Text)]
+  toJSON PutRangeNotAllowedError   = JSON.object [
+    "message" .= ("Range header and limit/offset querystring parameters are not allowed for PUT" :: Text)]
 
 compressedRel :: Relationship -> JSON.Value
 compressedRel Relationship{..} =
@@ -237,7 +241,6 @@ data Error
   | BinaryFieldError ContentType
   | ConnectionLostError
   | PutMatchingPkError
-  | PutRangeNotAllowedError
   | JwtTokenMissing
   | JwtTokenInvalid Text
   | SingularityError Integer
@@ -246,18 +249,17 @@ data Error
   | PgErr PgError
 
 instance PgrstError Error where
-  status GucHeadersError         = HT.status500
-  status GucStatusError          = HT.status500
-  status (BinaryFieldError _)    = HT.status406
-  status ConnectionLostError     = HT.status503
-  status PutMatchingPkError      = HT.status400
-  status PutRangeNotAllowedError = HT.status400
-  status JwtTokenMissing         = HT.status500
-  status (JwtTokenInvalid _)     = HT.unauthorized401
-  status (SingularityError _)    = HT.status406
-  status NotFound                = HT.status404
-  status (PgErr err)             = status err
-  status (ApiRequestError err)   = status err
+  status GucHeadersError       = HT.status500
+  status GucStatusError        = HT.status500
+  status (BinaryFieldError _)  = HT.status406
+  status ConnectionLostError   = HT.status503
+  status PutMatchingPkError    = HT.status400
+  status JwtTokenMissing       = HT.status500
+  status (JwtTokenInvalid _)   = HT.unauthorized401
+  status (SingularityError _)  = HT.status406
+  status NotFound              = HT.status404
+  status (PgErr err)           = status err
+  status (ApiRequestError err) = status err
 
   headers (SingularityError _)     = [ContentType.toHeader CTSingularJSON]
   headers (JwtTokenInvalid m)      = [ContentType.toHeader CTApplicationJSON, invalidTokenHeader m]
@@ -275,8 +277,6 @@ instance JSON.ToJSON Error where
   toJSON ConnectionLostError       = JSON.object [
     "message" .= ("Database connection lost. Retrying the connection." :: Text)]
 
-  toJSON PutRangeNotAllowedError   = JSON.object [
-    "message" .= ("Range header and limit/offset querystring parameters are not allowed for PUT" :: Text)]
   toJSON PutMatchingPkError        = JSON.object [
     "message" .= ("Payload values do not match URL in primary key column(s)" :: Text)]
 

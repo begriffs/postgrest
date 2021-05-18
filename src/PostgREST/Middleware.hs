@@ -4,11 +4,9 @@ Description : Sets CORS policy. Also the PostgreSQL GUCs, role, search_path and 
 -}
 {-# LANGUAGE RecordWildCards #-}
 module PostgREST.Middleware
-  ( runPgLocals
+  ( setPgLocals
   , pgrstFormat
   , pgrstMiddleware
-  , defaultCorsPolicy
-  , corsPolicy
   , optionalRollback
   ) where
 
@@ -51,16 +49,14 @@ import PostgREST.Request.Preferences
 import Protolude      hiding (head, toS)
 import Protolude.Conv (toS)
 
--- | Runs local(transaction scoped) GUCs for every request, plus the pre-request function
-runPgLocals :: AppConfig   -> M.HashMap Text JSON.Value ->
-               (ApiRequest -> ExceptT Error H.Transaction Wai.Response) ->
-               ApiRequest  -> ExceptT Error H.Transaction Wai.Response
-runPgLocals conf claims app req = do
+-- | Set local(transaction scoped) GUCs for every request, plus the pre-request function
+setPgLocals :: AppConfig -> M.HashMap Text JSON.Value -> ApiRequest
+  -> ExceptT Error H.Transaction ()
+setPgLocals conf claims req = do
   lift $ H.statement mempty $ H.dynamicallyParameterized
     ("select " <> intercalateSnippet ", " (searchPathSql : roleSql ++ claimsSql ++ [methodSql, pathSql] ++ headersSql ++ cookiesSql ++ appSettingsSql))
     HD.noResult (configDbPreparedStatements conf)
   lift $ traverse_ H.sql preReqSql
-  app req
   where
     methodSql = setConfigLocal mempty ("request.method", toS $ iMethod req)
     pathSql = setConfigLocal mempty ("request.path", toS $ iPath req)

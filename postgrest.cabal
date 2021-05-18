@@ -53,15 +53,18 @@ library
                       PostgREST.GucHeader
                       PostgREST.Middleware
                       PostgREST.OpenAPI
+                      PostgREST.Query
                       PostgREST.Query.QueryBuilder
                       PostgREST.Query.SqlFragment
                       PostgREST.Query.Statements
                       PostgREST.RangeQuery
+                      PostgREST.Request
                       PostgREST.Request.ApiRequest
                       PostgREST.Request.DbRequestBuilder
                       PostgREST.Request.Parsers
                       PostgREST.Request.Preferences
                       PostgREST.Request.Types
+                      PostgREST.Response
                       PostgREST.Version
                       PostgREST.Workers
   other-modules:      Paths_postgrest

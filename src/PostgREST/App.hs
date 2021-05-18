@@ -1,13 +1,6 @@
 {-|
 Module      : PostgREST.App
 Description : PostgREST main application
-
-This module is in charge of mapping HTTP requests to PostgreSQL queries.
-Some of its functionality includes:
-
-- Mapping HTTP request methods to proper SQL statements. For example, a GET request is translated to executing a SELECT query in a read-only TRANSACTION.
-- Producing HTTP Headers according to RFCs.
-- Content Negotiation
 -}
 {-# LANGUAGE RecordWildCards #-}
 module PostgREST.App
@@ -19,88 +12,47 @@ module PostgREST.App
 
 import Control.Monad.Except     (liftEither)
 import Data.Either.Combinators  (mapLeft)
-import Data.List                (union)
 import Data.String              (IsString (..))
 import Data.Time.Clock          (UTCTime)
 import Network.Wai.Handler.Warp (defaultSettings, setHost, setPort,
                                  setServerName)
 import System.Posix.Types       (FileMode)
 
-import qualified Data.ByteString.Char8           as BS8
-import qualified Data.ByteString.Lazy            as LBS
-import qualified Data.Set                        as Set
-import qualified Hasql.DynamicStatements.Snippet as SQL
-import qualified Hasql.Pool                      as SQL
-import qualified Hasql.Transaction               as SQL
-import qualified Hasql.Transaction.Sessions      as SQL
-import qualified Network.HTTP.Types.Header       as HTTP
-import qualified Network.HTTP.Types.Status       as HTTP
-import qualified Network.HTTP.Types.URI          as HTTP
-import qualified Network.Wai                     as Wai
-import qualified Network.Wai.Handler.Warp        as Warp
+import qualified Hasql.Pool                 as SQL
+import qualified Hasql.Transaction.Sessions as SQL
+import qualified Network.HTTP.Types.Status  as HTTP
+import qualified Network.Wai                as Wai
+import qualified Network.Wai.Handler.Warp   as Warp
 
-import qualified PostgREST.AppState                 as AppState
-import qualified PostgREST.Auth                     as Auth
-import qualified PostgREST.DbStructure              as DbStructure
-import qualified PostgREST.Error                    as Error
-import qualified PostgREST.Middleware               as Middleware
-import qualified PostgREST.OpenAPI                  as OpenAPI
-import qualified PostgREST.Query.QueryBuilder       as QueryBuilder
-import qualified PostgREST.Query.Statements         as Statements
-import qualified PostgREST.RangeQuery               as RangeQuery
-import qualified PostgREST.Request.ApiRequest       as ApiRequest
-import qualified PostgREST.Request.DbRequestBuilder as ReqBuilder
+import qualified PostgREST.AppState   as AppState
+import qualified PostgREST.Auth       as Auth
+import qualified PostgREST.Error      as Error
+import qualified PostgREST.Middleware as Middleware
+import qualified PostgREST.Query      as Query
+import qualified PostgREST.Request    as Request
+import qualified PostgREST.Response   as Response
 
 import PostgREST.AppState                (AppState)
 import PostgREST.Config                  (AppConfig (..),
                                           LogLevel (..))
-import PostgREST.ContentType             (ContentType (..))
 import PostgREST.DbStructure             (DbStructure (..),
                                           tablePKCols)
-import PostgREST.DbStructure.Identifiers (FieldName,
-                                          QualifiedIdentifier (..),
-                                          Schema)
+import PostgREST.DbStructure.Identifiers (QualifiedIdentifier (..))
 import PostgREST.DbStructure.PgVersion   (PgVersion (..))
-import PostgREST.DbStructure.Proc        (ProcDescription (..),
-                                          ProcVolatility (..))
 import PostgREST.DbStructure.Table       (Table (..))
 import PostgREST.Error                   (Error)
-import PostgREST.GucHeader               (GucHeader,
-                                          addHeadersIfNotIncluded,
-                                          unwrapGucHeader)
-import PostgREST.Request.ApiRequest      (Action (..),
-                                          ApiRequest (..),
-                                          InvokeMethod (..),
-                                          Target (..))
-import PostgREST.Request.Preferences     (PreferCount (..),
-                                          PreferParameters (..),
-                                          PreferRepresentation (..))
-import PostgREST.Request.Types           (ReadRequest, fstFieldNames)
+import PostgREST.Query                   (DbHandler)
+import PostgREST.Request                 (Request (..))
 import PostgREST.Version                 (prettyVersion)
 import PostgREST.Workers                 (connectionWorker, listener)
-
-import qualified PostgREST.ContentType      as ContentType
-import qualified PostgREST.DbStructure.Proc as Proc
 
 import Protolude      hiding (Handler, toS)
 import Protolude.Conv (toS)
 
 
-data RequestContext = RequestContext
-  { ctxConfig      :: AppConfig
-  , ctxDbStructure :: DbStructure
-  , ctxApiRequest  :: ApiRequest
-  , ctxPgVersion   :: PgVersion
-  }
-
 type Handler = ExceptT Error
-
-type DbHandler = Handler SQL.Transaction
-
 type SignalHandlerInstaller = AppState -> IO()
-
 type SocketRunner = Warp.Settings -> Wai.Application -> FileMode -> FilePath -> IO()
-
 
 run :: SignalHandlerInstaller -> Maybe SocketRunner -> AppState -> IO ()
 run installHandlers maybeRunWithSocket appState = do
@@ -120,10 +72,9 @@ run installHandlers maybeRunWithSocket appState = do
           runWithSocket (serverSettings conf) app configServerUnixSocketMode socket
         Nothing ->
           panic "Cannot run with socket on non-unix plattforms."
-    Nothing ->
-      do
-        putStrLn $ ("Listening on port " :: Text) <> show configServerPort
-        Warp.runSettings (serverSettings conf) app
+    Nothing -> do
+      putStrLn $ ("Listening on port " :: Text) <> show configServerPort
+      Warp.runSettings (serverSettings conf) app
 
 serverSettings :: AppConfig -> Warp.Settings
 serverSettings AppConfig{..} =
@@ -136,7 +87,7 @@ serverSettings AppConfig{..} =
 postgrest :: LogLevel -> AppState.AppState -> IO () -> Wai.Application
 postgrest logLev appState connWorker =
   Middleware.pgrstMiddleware logLev $
-    \req respond -> do
+    \waiRequest waiRespond -> do
       time <- AppState.getTime appState
       conf <- AppState.getConfig appState
       maybeDbStructure <- AppState.getDbStructure appState
@@ -145,7 +96,7 @@ postgrest logLev appState connWorker =
       let
         eitherResponse :: IO (Either Error Wai.Response)
         eitherResponse =
-          runExceptT $ postgrestResponse conf maybeDbStructure pgVer (AppState.getPool appState) time req
+          runExceptT $ postgrestResponse conf pgVer maybeDbStructure (AppState.getPool appState) time waiRequest
 
       response <- either Error.errorResponseFor identity <$> eitherResponse
 
@@ -154,449 +105,59 @@ postgrest logLev appState connWorker =
       -- the connWorker is done.
       when (Wai.responseStatus response == HTTP.status503) connWorker
 
-      respond response
+      waiRespond response
 
 postgrestResponse
   :: AppConfig
-  -> Maybe DbStructure
   -> PgVersion
+  -> Maybe DbStructure
   -> SQL.Pool
   -> UTCTime
   -> Wai.Request
   -> Handler IO Wai.Response
-postgrestResponse conf maybeDbStructure pgVer pool time req = do
-  body <- lift $ Wai.strictRequestBody req
-
-  dbStructure <-
-    case maybeDbStructure of
-      Just dbStructure ->
-        return dbStructure
-      Nothing ->
-        throwError Error.ConnectionLostError
-
-  apiRequest@ApiRequest{..} <-
-    liftEither . mapLeft Error.ApiRequestError $
-      ApiRequest.userApiRequest conf dbStructure req body
-
+postgrestResponse conf pgVer maybeDbStructure pool time waiRequest = do
+  -- Fail early if no DbStructure is loaded
+  dbStructure <- maybe (throwError Error.ConnectionLostError) pure maybeDbStructure
   -- The JWT must be checked before touching the db
-  jwtClaims <- Auth.jwtClaims conf (toS iJWT) time
-
-  let
-    handleReq apiReq =
-      handleRequest $ RequestContext conf dbStructure apiReq pgVer
-
-  runDbHandler pool (txMode apiRequest) jwtClaims .
-    Middleware.optionalRollback conf apiRequest $
-      Middleware.runPgLocals conf jwtClaims handleReq apiRequest
+  jwtClaims <- Auth.jwtClaims conf waiRequest time
+  waiBody <- lift $ Wai.strictRequestBody waiRequest
+  request <- liftEither $ Request.parse conf pgVer dbStructure waiRequest waiBody
+  runDbHandler pool (Query.txMode $ Request.apiReq request) jwtClaims .
+    Middleware.optionalRollback conf (Request.apiReq request) $ do
+      Middleware.setPgLocals conf jwtClaims (Request.apiReq request)
+      handleRequest request
 
 runDbHandler :: SQL.Pool -> SQL.Mode -> Auth.JWTClaims -> DbHandler a -> Handler IO a
 runDbHandler pool mode jwtClaims handler = do
   dbResp <-
     lift . SQL.use pool . SQL.transaction SQL.ReadCommitted mode $ runExceptT handler
-
   resp <-
     liftEither . mapLeft Error.PgErr $
       mapLeft (Error.PgError $ Auth.containsRole jwtClaims) dbResp
-
   liftEither resp
 
-handleRequest :: RequestContext -> DbHandler Wai.Response
-handleRequest context@(RequestContext _ _ ApiRequest{..} _) =
-  case (iAction, iTarget) of
-    (ActionRead headersOnly, TargetIdent identifier) ->
-      handleRead headersOnly identifier context
-    (ActionCreate, TargetIdent identifier) ->
-      handleCreate identifier context
-    (ActionUpdate, TargetIdent identifier) ->
-      handleUpdate identifier context
-    (ActionSingleUpsert, TargetIdent identifier) ->
-      handleSingleUpsert identifier context
-    (ActionDelete, TargetIdent identifier) ->
-      handleDelete identifier context
-    (ActionInfo, TargetIdent identifier) ->
-      handleInfo identifier context
-    (ActionInvoke invMethod, TargetProc proc _) ->
-      handleInvoke invMethod proc context
-    (ActionInspect headersOnly, TargetDefaultSpec tSchema) ->
-      handleOpenApi headersOnly tSchema context
-    _ ->
-      throwError Error.NotFound
-
-handleRead :: Bool -> QualifiedIdentifier -> RequestContext -> DbHandler Wai.Response
-handleRead headersOnly identifier context@RequestContext{..} = do
-  req <- readRequest identifier context
-  bField <- binaryField context req
-
-  let
-    ApiRequest{..} = ctxApiRequest
-    AppConfig{..} = ctxConfig
-    countQuery = QueryBuilder.readRequestToCountQuery req
-
-  (tableTotal, queryTotal, _ , body, gucHeaders, gucStatus) <-
-    lift . SQL.statement mempty $
-      Statements.createReadStatement
-        (QueryBuilder.readRequestToQuery req)
-        (if iPreferCount == Just EstimatedCount then
-           -- LIMIT maxRows + 1 so we can determine below that maxRows was surpassed
-           QueryBuilder.limitedQuery countQuery ((+ 1) <$> configDbMaxRows)
-         else
-           countQuery
-        )
-        (iAcceptContentType == CTSingularJSON)
-        (shouldCount iPreferCount)
-        (iAcceptContentType == CTTextCSV)
-        bField
-        ctxPgVersion
-        configDbPreparedStatements
-
-  total <- readTotal ctxConfig ctxApiRequest tableTotal countQuery
-  response <- liftEither $ gucResponse <$> gucStatus <*> gucHeaders
-
-  let
-    (status, contentRange) = RangeQuery.rangeStatusHeader iTopLevelRange queryTotal total
-    headers =
-      [ contentRange
-      , ( "Content-Location"
-        , "/"
-            <> toS (qiName identifier)
-            <> if BS8.null iCanonicalQS then mempty else "?" <> toS iCanonicalQS
-        )
-      ]
-      ++ contentTypeHeaders context
-
-  failNotSingular iAcceptContentType queryTotal . response status headers $
-    if headersOnly then mempty else toS body
-
-readTotal :: AppConfig -> ApiRequest -> Maybe Int64 -> SQL.Snippet -> DbHandler (Maybe Int64)
-readTotal AppConfig{..} ApiRequest{..} tableTotal countQuery =
-  case iPreferCount of
-    Just PlannedCount ->
-      explain
-    Just EstimatedCount ->
-      if tableTotal > (fromIntegral <$> configDbMaxRows) then
-        max tableTotal <$> explain
-      else
-        return tableTotal
-    _ ->
-      return tableTotal
-  where
-    explain =
-      lift . SQL.statement mempty . Statements.createExplainStatement countQuery $
-        configDbPreparedStatements
-
-handleCreate :: QualifiedIdentifier -> RequestContext -> DbHandler Wai.Response
-handleCreate identifier@QualifiedIdentifier{..} context@RequestContext{..} = do
-  let
-    ApiRequest{..} = ctxApiRequest
-    pkCols = tablePKCols ctxDbStructure qiSchema qiName
-
-  WriteQueryResult{..} <- writeQuery identifier True pkCols context
-
-  let
-    response = gucResponse resGucStatus resGucHeaders
-    headers =
-      catMaybes
-        [ if null resFields then
-            Nothing
-          else
-            Just
-              ( HTTP.hLocation
-              , "/"
-                  <> toS qiName
-                  <> HTTP.renderSimpleQuery True (splitKeyValue <$> resFields)
-              )
-        , Just . RangeQuery.contentRangeH 1 0 $
-            if shouldCount iPreferCount then Just resQueryTotal else Nothing
-        , if null pkCols && isNothing iOnConflict then
-            Nothing
-          else
-            (\x -> ("Preference-Applied", BS8.pack $ show x)) <$> iPreferResolution
-        ]
-
-  failNotSingular iAcceptContentType resQueryTotal $
-    if iPreferRepresentation == Full then
-      response HTTP.status201 (headers ++ contentTypeHeaders context) (toS resBody)
-    else
-      response HTTP.status201 headers mempty
-
-handleUpdate :: QualifiedIdentifier -> RequestContext -> DbHandler Wai.Response
-handleUpdate identifier context@(RequestContext _ _ ApiRequest{..} _) = do
-  WriteQueryResult{..} <- writeQuery identifier False mempty context
-
-  let
-    response = gucResponse resGucStatus resGucHeaders
-    fullRepr = iPreferRepresentation == Full
-    updateIsNoOp = Set.null iColumns
-    status
-      | resQueryTotal == 0 && not updateIsNoOp = HTTP.status404
-      | fullRepr = HTTP.status200
-      | otherwise = HTTP.status204
-    contentRangeHeader =
-      RangeQuery.contentRangeH 0 (resQueryTotal - 1) $
-        if shouldCount iPreferCount then Just resQueryTotal else Nothing
-
-  failNotSingular iAcceptContentType resQueryTotal $
-    if fullRepr then
-      response status (contentTypeHeaders context ++ [contentRangeHeader]) (toS resBody)
-    else
-      response status [contentRangeHeader] mempty
-
-handleSingleUpsert :: QualifiedIdentifier -> RequestContext-> DbHandler Wai.Response
-handleSingleUpsert identifier context@(RequestContext _ _ ApiRequest{..} _) = do
-  when (iTopLevelRange /= RangeQuery.allRange) $
-    throwError Error.PutRangeNotAllowedError
-
-  WriteQueryResult{..} <- writeQuery identifier False mempty context
-
-  let response = gucResponse resGucStatus resGucHeaders
-
-  -- Makes sure the querystring pk matches the payload pk
-  -- e.g. PUT /items?id=eq.1 { "id" : 1, .. } is accepted,
-  -- PUT /items?id=eq.14 { "id" : 2, .. } is rejected.
-  -- If this condition is not satisfied then nothing is inserted,
-  -- check the WHERE for INSERT in QueryBuilder.hs to see how it's done
-  when (resQueryTotal /= 1) $ do
-    lift SQL.condemn
-    throwError Error.PutMatchingPkError
-
-  return $
-    if iPreferRepresentation == Full then
-      response HTTP.status200 (contentTypeHeaders context) (toS resBody)
-    else
-      response HTTP.status204 (contentTypeHeaders context) mempty
-
-handleDelete :: QualifiedIdentifier -> RequestContext -> DbHandler Wai.Response
-handleDelete identifier context@(RequestContext _ _ ApiRequest{..} _) = do
-  WriteQueryResult{..} <- writeQuery identifier False mempty context
-
-  let
-    response = gucResponse resGucStatus resGucHeaders
-    contentRangeHeader =
-      RangeQuery.contentRangeH 1 0 $
-        if shouldCount iPreferCount then Just resQueryTotal else Nothing
-
-  failNotSingular iAcceptContentType resQueryTotal $
-    if iPreferRepresentation == Full then
-      response HTTP.status200
-        (contentTypeHeaders context ++ [contentRangeHeader])
-        (toS resBody)
-    else
-      response HTTP.status204 [contentRangeHeader] mempty
-
-handleInfo :: Monad m => QualifiedIdentifier -> RequestContext -> Handler m Wai.Response
-handleInfo identifier RequestContext{..} =
-  case find tableMatches $ dbTables ctxDbStructure of
-    Just table ->
-      return $ Wai.responseLBS HTTP.status200 [allOrigins, allowH table] mempty
-    Nothing ->
-      throwError Error.NotFound
-  where
-    allOrigins = ("Access-Control-Allow-Origin", "*")
-    allowH table =
-      ( HTTP.hAllow
-      , BS8.intercalate "," $
-          ["OPTIONS,GET,HEAD"]
-          ++ ["POST" | tableInsertable table]
-          ++ ["PUT" | tableInsertable table && tableUpdatable table && hasPK]
-          ++ ["PATCH" | tableUpdatable table]
-          ++ ["DELETE" | tableDeletable table]
-      )
-    tableMatches table =
-      tableName table == qiName identifier
-      && tableSchema table == qiSchema identifier
-    hasPK =
-      not $ null $ tablePKCols ctxDbStructure (qiSchema identifier) (qiName identifier)
-
-handleInvoke :: InvokeMethod -> ProcDescription -> RequestContext -> DbHandler Wai.Response
-handleInvoke invMethod proc context@RequestContext{..} = do
-  let
-    ApiRequest{..} = ctxApiRequest
-
-    identifier =
-      QualifiedIdentifier
-        (pdSchema proc)
-        (fromMaybe (pdName proc) $ Proc.procTableName proc)
-
-    returnsSingle (ApiRequest.TargetProc target _) = Proc.procReturnsSingle target
-    returnsSingle _                                = False
-
-  req <- readRequest identifier context
-  bField <- binaryField context req
-
-  (tableTotal, queryTotal, body, gucHeaders, gucStatus) <-
-    lift . SQL.statement mempty $
-      Statements.callProcStatement
-        (returnsScalar iTarget)
-        (returnsSingle iTarget)
-        (QueryBuilder.requestToCallProcQuery
-          (QualifiedIdentifier (pdSchema proc) (pdName proc))
-          (Proc.specifiedProcArgs iColumns proc)
-          iPayload
-          (returnsScalar iTarget)
-          iPreferParameters
-          (ReqBuilder.returningCols req [])
-        )
-        (QueryBuilder.readRequestToQuery req)
-        (QueryBuilder.readRequestToCountQuery req)
-        (shouldCount iPreferCount)
-        (iAcceptContentType == CTSingularJSON)
-        (iAcceptContentType == CTTextCSV)
-        (iPreferParameters == Just MultipleObjects)
-        bField
-        ctxPgVersion
-        (configDbPreparedStatements ctxConfig)
-
-  response <- liftEither $ gucResponse <$> gucStatus <*> gucHeaders
-
-  let
-    (status, contentRange) =
-      RangeQuery.rangeStatusHeader iTopLevelRange queryTotal tableTotal
-
-  failNotSingular iAcceptContentType queryTotal $
-    response status
-      (contentTypeHeaders context ++ [contentRange])
-      (if invMethod == InvHead then mempty else toS body)
-
-handleOpenApi :: Bool -> Schema -> RequestContext -> DbHandler Wai.Response
-handleOpenApi headersOnly tSchema (RequestContext conf@AppConfig{..} dbStructure apiRequest _) = do
-  body <-
-    lift $
-      OpenAPI.encode conf dbStructure
-        <$> SQL.statement tSchema (DbStructure.accessibleTables configDbPreparedStatements)
-        <*> SQL.statement tSchema (DbStructure.schemaDescription configDbPreparedStatements)
-        <*> SQL.statement tSchema (DbStructure.accessibleProcs configDbPreparedStatements)
-
-  return $
-    Wai.responseLBS HTTP.status200
-      (ContentType.toHeader CTOpenAPI : maybeToList (profileHeader apiRequest))
-      (if headersOnly then mempty else toS body)
-
-txMode :: ApiRequest -> SQL.Mode
-txMode ApiRequest{..} =
-  case (iAction, iTarget) of
-    (ActionRead _, _) ->
-      SQL.Read
-    (ActionInfo, _) ->
-      SQL.Read
-    (ActionInspect _, _) ->
-      SQL.Read
-    (ActionInvoke InvGet, _) ->
-      SQL.Read
-    (ActionInvoke InvHead, _) ->
-      SQL.Read
-    (ActionInvoke InvPost, TargetProc ProcDescription{pdVolatility=Stable} _) ->
-      SQL.Read
-    (ActionInvoke InvPost, TargetProc ProcDescription{pdVolatility=Immutable} _) ->
-      SQL.Read
-    _ ->
-      SQL.Write
-
--- | Result from executing a write query on the database
-data WriteQueryResult = WriteQueryResult
-  { resQueryTotal :: Int64
-  , resFields     :: [ByteString]
-  , resBody       :: ByteString
-  , resGucStatus  :: Maybe HTTP.Status
-  , resGucHeaders :: [GucHeader]
-  }
-
-writeQuery :: QualifiedIdentifier -> Bool -> [Text] -> RequestContext -> DbHandler WriteQueryResult
-writeQuery identifier@QualifiedIdentifier{..} isInsert pkCols context@RequestContext{..} = do
-  readReq <- readRequest identifier context
-
-  mutateReq <-
-    liftEither $
-      ReqBuilder.mutateRequest qiSchema qiName ctxApiRequest
-        (tablePKCols ctxDbStructure qiSchema qiName)
-        readReq
-
-  (_, queryTotal, fields, body, gucHeaders, gucStatus) <-
-    lift . SQL.statement mempty $
-      Statements.createWriteStatement
-        (QueryBuilder.readRequestToQuery readReq)
-        (QueryBuilder.mutateRequestToQuery mutateReq)
-        (iAcceptContentType ctxApiRequest == CTSingularJSON)
-        isInsert
-        (iAcceptContentType ctxApiRequest == CTTextCSV)
-        (iPreferRepresentation ctxApiRequest)
-        pkCols
-        ctxPgVersion
-        (configDbPreparedStatements ctxConfig)
-
-  liftEither $ WriteQueryResult queryTotal fields body <$> gucStatus <*> gucHeaders
-
--- | Response with headers and status overridden from GUCs.
-gucResponse
-  :: Maybe HTTP.Status
-  -> [GucHeader]
-  -> HTTP.Status
-  -> [HTTP.Header]
-  -> LBS.ByteString
-  -> Wai.Response
-gucResponse gucStatus gucHeaders status headers =
-  Wai.responseLBS (fromMaybe status gucStatus) $
-    addHeadersIfNotIncluded headers (map unwrapGucHeader gucHeaders)
-
--- |
--- Fail a response if a single JSON object was requested and not exactly one
--- was found.
-failNotSingular :: ContentType -> Int64 -> Wai.Response -> DbHandler Wai.Response
-failNotSingular contentType queryTotal response =
-  if contentType == CTSingularJSON && queryTotal /= 1 then
-    do
-      lift SQL.condemn
-      throwError $ Error.singularityError queryTotal
-  else
-    return response
-
-shouldCount :: Maybe PreferCount -> Bool
-shouldCount preferCount =
-  preferCount == Just ExactCount || preferCount == Just EstimatedCount
-
-returnsScalar :: ApiRequest.Target -> Bool
-returnsScalar (TargetProc proc _) = Proc.procReturnsScalar proc
-returnsScalar _                   = False
-
-readRequest :: Monad m => QualifiedIdentifier -> RequestContext -> Handler m ReadRequest
-readRequest QualifiedIdentifier{..} (RequestContext AppConfig{..} dbStructure apiRequest _) =
-  liftEither $
-    ReqBuilder.readRequest qiSchema qiName configDbMaxRows
-      (dbRelationships dbStructure)
-      apiRequest
-
-contentTypeHeaders :: RequestContext -> [HTTP.Header]
-contentTypeHeaders RequestContext{..} =
-  ContentType.toHeader (iAcceptContentType ctxApiRequest) : maybeToList (profileHeader ctxApiRequest)
-
--- | If raw(binary) output is requested, check that ContentType is one of the
--- admitted rawContentTypes and that`?select=...` contains only one field other
--- than `*`
-binaryField :: Monad m => RequestContext -> ReadRequest -> Handler m (Maybe FieldName)
-binaryField RequestContext{..} readReq
-  | returnsScalar (iTarget ctxApiRequest) && iAcceptContentType ctxApiRequest `elem` rawContentTypes ctxConfig =
-      return $ Just "pgrst_scalar"
-  | iAcceptContentType ctxApiRequest `elem` rawContentTypes ctxConfig =
-      let
-        fldNames = fstFieldNames readReq
-        fieldName = headMay fldNames
-      in
-      if length fldNames == 1 && fieldName /= Just "*" then
-        return fieldName
-      else
-        throwError $ Error.BinaryFieldError (iAcceptContentType ctxApiRequest)
-  | otherwise =
-      return Nothing
-
-rawContentTypes :: AppConfig -> [ContentType]
-rawContentTypes AppConfig{..} =
-  (ContentType.decodeContentType <$> configRawMediaTypes) `union` [CTOctetStream, CTTextPlain]
-
-profileHeader :: ApiRequest -> Maybe HTTP.Header
-profileHeader ApiRequest{..} =
-  (,) "Content-Profile" <$> (toS <$> iProfile)
-
-splitKeyValue :: ByteString -> (ByteString, ByteString)
-splitKeyValue kv =
-  (k, BS8.tail v)
-  where
-    (k, v) = BS8.break (== '=') kv
+handleRequest :: Request -> DbHandler Wai.Response
+handleRequest req =
+  case req of
+    ReadRequest readRequestInfo ->
+      Response.readResponse <$> Query.readQuery readRequestInfo
+    CreateRequest mutateRequestInfo ->
+      Response.createResponse <$> Query.createQuery mutateRequestInfo
+    UpdateRequest mutateRequestInfo ->
+      Response.updateResponse <$> Query.updateQuery mutateRequestInfo
+    SingleUpsertRequest mutateRequestInfo ->
+      Response.singleUpsertResponse <$> Query.singleUpsertQuery mutateRequestInfo
+    DeleteRequest mutateRequestInfo ->
+      Response.deleteResponse <$> Query.deleteQuery mutateRequestInfo
+    InfoRequest dbStructure _ QualifiedIdentifier{..} ->
+      case find tableMatches $ dbTables dbStructure of
+        Just table -> return $ Response.infoResponse hasPK table
+        Nothing    -> throwError Error.NotFound
+      where
+        tableMatches Table{..} = tableName == qiName && tableSchema == qiSchema
+        hasPK = not $ null $ tablePKCols dbStructure qiSchema qiName
+    InvokeRequest invokeRequestInfo  ->
+      Response.invokeResponse <$> Query.invokeQuery invokeRequestInfo
+    OpenApiRequest conf dbStructure apiRequest headersOnly tSchema ->
+      Response.openApiResponse headersOnly conf dbStructure apiRequest
+        <$> Query.openApiQuery tSchema conf
