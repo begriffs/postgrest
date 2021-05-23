@@ -12,10 +12,11 @@
 { docker ? false
 , memory ? false
 , release ? false
+, stack ? false
 }:
 let
   postgrest =
-    import ./default.nix;
+    import ./default.nix { inherit stack; };
 
   pkgs =
     postgrest.pkgs;
@@ -25,7 +26,8 @@ let
 
   toolboxes =
     [
-      postgrest.cabalTools
+      postgrest.buildTools
+      postgrest.ciTools
       postgrest.devTools
       postgrest.nixpkgsTools
       postgrest.style
@@ -43,7 +45,9 @@ lib.overrideDerivation postgrest.env (
       base.buildInputs ++ [
         pkgs.cabal-install
         pkgs.cabal2nix
+        pkgs.circleci-cli
         pkgs.postgresql
+        pkgs.stack
         postgrest.hsie.bin
       ]
       ++ toolboxes;

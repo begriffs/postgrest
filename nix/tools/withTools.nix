@@ -25,6 +25,7 @@ let
         addCommandCompletion = true;
         inRootDir = true;
         redirectTixFiles = false;
+        withPath = [ postgresql ];
         withTmpDir = true;
       }
       ''
@@ -32,8 +33,7 @@ let
         if test -v PGRST_DB_URI; then
           exec "$@"
         fi
-        
-        export PATH=${postgresql}/bin:"$PATH"
+
         setuplog="$tmpdir/setup.log"
 
         log () {
@@ -72,6 +72,7 @@ let
         stop () {
           log "Stopping the database cluster..."
           pg_ctl stop -m i >> "$setuplog"
+          rm -rf "$tmpdir/db"
         }
         trap stop EXIT
 

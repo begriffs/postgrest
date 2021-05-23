@@ -14,10 +14,9 @@ let
         name = "postgrest-test-memory";
         docs = "Run the memory tests.";
         inRootDir = true;
+        withPath = [ postgrestProfiled curl ];
       }
       ''
-        export PATH="${postgrestProfiled}/bin:${curl}/bin:$PATH"
-
         ${withTools.latest} test/memory-tests.sh
       '';
 

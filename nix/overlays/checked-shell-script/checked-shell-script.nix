@@ -18,6 +18,7 @@
 , inRootDir ? false
 , redirectTixFiles ? true
 , withEnv ? null
+, withPath ? [ ]
 , withTmpDir ? false
 }: text:
 let
@@ -83,10 +84,12 @@ let
         ''
 
         + lib.optionalString redirectTixFiles ''
-          # storing tix files in a temporary throw away directory avoids mix/tix conflicts after changes
-          hpctixdir=$(${coreutils}/bin/mktemp -d)
-          export HPCTIXFILE="$hpctixdir"/postgrest.tix
-          trap 'rm -rf $hpctixdir' EXIT
+          if ! test -v HPCTIXFILE; then
+            # storing tix files in a temporary throw away directory avoids mix/tix conflicts after changes
+            hpctixdir=$(${coreutils}/bin/mktemp -d)
+            export HPCTIXFILE="$hpctixdir"/postgrest.tix
+            trap 'rm -rf $hpctixdir' EXIT
+          fi
         ''
 
         + lib.optionalString inRootDir ''
@@ -112,6 +115,10 @@ let
         + lib.optionalString (withEnv != null) ''
           env="$(cat ${withEnv})"
           export PATH="$env/bin:$PATH"
+        ''
+
+        + lib.optionalString (lib.length withPath > 0) ''
+          export PATH="${lib.concatMapStrings (p: p + "/bin:") withPath}$PATH"
         ''
 
         + "(${text})"

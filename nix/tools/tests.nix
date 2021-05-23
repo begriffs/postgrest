@@ -1,14 +1,12 @@
 { buildToolbox
-, cabal-install
+, buildTools
 , checkedShellScript
-, devCabalOptions
 , ghc
 , glibcLocales
 , gnugrep
 , haskell
 , hpc-codecov
 , jq
-, postgrest
 , python3
 , runtimeShell
 , withTools
@@ -21,10 +19,9 @@ let
         name = "postgrest-test-spec";
         docs = "Run the Haskell test suite";
         inRootDir = true;
-        withEnv = postgrest.env;
       }
       ''
-        ${withTools.latest} ${cabal-install}/bin/cabal v2-test ${devCabalOptions}
+        ${withTools.latest} ${buildTools.test}
       '';
 
   testSpecIdempotence =
@@ -33,12 +30,11 @@ let
         name = "postgrest-test-spec-idempotence";
         docs = "Check that the Haskell tests can be run multiple times against the same db.";
         inRootDir = true;
-        withEnv = postgrest.env;
       }
       ''
         ${withTools.latest} ${runtimeShell} -c " \
-          ${cabal-install}/bin/cabal v2-test ${devCabalOptions} && \
-          ${cabal-install}/bin/cabal v2-test ${devCabalOptions}"
+          ${buildTools.test} && \
+          ${buildTools.test}"
       '';
 
   ioTestPython =
@@ -58,12 +54,10 @@ let
         docs = "Run the pytest-based IO tests.";
         args = [ "ARG_LEFTOVERS([pytest arguments])" ];
         inRootDir = true;
-        withEnv = postgrest.env;
       }
       ''
-        ${cabal-install}/bin/cabal v2-build ${devCabalOptions}
-        ${cabal-install}/bin/cabal v2-exec ${withTools.latest} \
-          ${ioTestPython}/bin/pytest -- -v test/io-tests "''${_arg_leftovers[@]}"
+        ${withTools.latest} ${buildTools.exec} \
+          ${ioTestPython}/bin/pytest -v test/io-tests "''${_arg_leftovers[@]}"
       '';
 
   dumpSchema =
@@ -72,15 +66,11 @@ let
         name = "postgrest-dump-schema";
         docs = "Dump the loaded schema's DbStructure as a yaml file.";
         inRootDir = true;
-        withEnv = postgrest.env;
+        withPath = [ jq ];
       }
       ''
-        export PATH="${jq}/bin:$PATH"
-        
-        ${withTools.latest} \
-            ${cabal-install}/bin/cabal v2-run ${devCabalOptions} --verbose=0 -- \
-            postgrest --dump-schema \
-            | ${yq}/bin/yq -y .
+        ${withTools.latest} ${buildTools.run} --dump-schema \
+          | ${yq}/bin/yq -y .
       '';
 
   coverage =
@@ -91,7 +81,6 @@ let
         args = [ "ARG_LEFTOVERS([hpc report arguments])" ];
         inRootDir = true;
         redirectTixFiles = false;
-        withEnv = postgrest.env;
         withTmpDir = true;
       }
       ''
@@ -101,16 +90,12 @@ let
         mkdir -p coverage
         rm -rf coverage/*
 
-        # build once before running all the tests
-        ${cabal-install}/bin/cabal v2-build ${devCabalOptions} exe:postgrest lib:postgrest test:spec test:spec-querycost
-
         # collect all tests
         HPCTIXFILE="$tmpdir"/io.tix \
-        ${withTools.latest} ${cabal-install}/bin/cabal v2-exec ${devCabalOptions} \
-          ${ioTestPython}/bin/pytest -- -v test/io-tests
+        ${testIO}
           
         HPCTIXFILE="$tmpdir"/spec.tix \
-        ${withTools.latest} ${cabal-install}/bin/cabal v2-test ${devCabalOptions}
+        ${withTools.latest} ${buildTools.test}
 
         # collect all the tix files
         ${ghc}/bin/hpc sum  --union --exclude=Paths_postgrest --output="$tmpdir"/tests.tix "$tmpdir"/io*.tix "$tmpdir"/spec.tix

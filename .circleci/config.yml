@@ -22,51 +22,61 @@ jobs:
             # 'Note: For checking this locally, use `nix-shell --run postgrest-style`
             postgrest-style-check
 
-  # Run tests based on stack and docker against the oldest PostgreSQL version
-  # that we support.
+  # Run tests based on stack
   stack-test:
     docker:
-      - image: cimg/base:2021.03
-        environment:
-          - PGHOST=localhost
-      - image: circleci/postgres:9.5
-        environment:
-          - POSTGRES_USER=circleci
-          - POSTGRES_DB=circleci
-          - POSTGRES_HOST_AUTH_METHOD=trust
+      - image: technowledgy/nix:latest
     steps:
       - checkout
+      - run:
+          name: Install testing scripts
+          command: nix-env -f default.nix --arg stack true -iA buildTools tests withTools
       - restore_cache:
           keys:
           - v1-stack-dependencies-{{ checksum "postgrest.cabal" }}-{{ checksum "stack.yaml" }}
       - run:
-          name: install stack & dependencies
-          command: |
-            curl -L https://github.com/commercialhaskell/stack/releases/download/v2.3.1/stack-2.3.1-linux-x86_64.tar.gz | tar zx -C /tmp
-            sudo mv /tmp/stack-2.3.1-linux-x86_64/stack /usr/bin
-            sudo apt-get update
-            sudo apt-get install -y libgmp-dev postgresql-client
-            sudo apt-get install -y --only-upgrade binutils
-            stack setup
-      - run:
-          name: build src and tests dependencies
-          command: |
-            stack build --fast -j1 --only-dependencies
-            stack build --fast --test --no-run-tests --only-dependencies
+          name: Build all dependencies
+          command: postgrest-build -j1 --only-dependencies
       - save_cache:
           paths:
             - "~/.stack"
             - ".stack-work"
           key: v1-stack-dependencies-{{ checksum "postgrest.cabal" }}-{{ checksum "stack.yaml" }}
       - run:
-          name: build src and tests
-          command: |
-            stack build --fast -j1
-            stack build --fast --test --no-run-tests
+          name: Build src and tests
+          command: postgrest-build -j1
       - run:
-          name: run spec tests
-          command: |
-            test/create_test_db "postgres://circleci@localhost" postgrest_test stack test
+          name: Skip tests on build or primary test failure
+          command: circleci-agent step halt
+          when: on_fail
+      - run:
+          name: Run coverage (io tests and spec tests against PostgreSQL 13)
+          command: postgrest-coverage
+          when: always
+      - run:
+          name: Run the spec tests against PostgreSQL 12
+          command: postgrest-with-postgresql-12 postgrest-test-spec
+          when: always
+      - run:
+          name: Run the spec tests against PostgreSQL 11
+          command: postgrest-with-postgresql-11 postgrest-test-spec
+          when: always
+      - run:
+          name: Run the spec tests against PostgreSQL 10
+          command: postgrest-with-postgresql-10 postgrest-test-spec
+          when: always
+      - run:
+          name: Run the spec tests against PostgreSQL 9.6
+          command: postgrest-with-postgresql-9.6 postgrest-test-spec
+          when: always
+      - run:
+          name: Run the spec tests against PostgreSQL 9.5
+          command: postgrest-with-postgresql-9.5 postgrest-test-spec
+          when: always
+      - run:
+          name: Check the spec tests for idempotence
+          command: postgrest-test-spec-idempotence
+          when: always
       - store_artifacts:
           path: /tmp/postgrest
 
@@ -161,7 +171,7 @@ jobs:
       - store_artifacts:
           path: /tmp/postgrest
 
-  # Run tests
+  # Run tests based on cabal
   nix-test:
     machine: true
     steps:
