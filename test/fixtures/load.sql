@@ -9,3 +9,4 @@
 \ir jsonschema.sql
 \ir privileges.sql
 \ir data.sql
+\ir hollywood.sql
