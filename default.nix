@@ -154,4 +154,8 @@ rec {
 
   withTools =
     pkgs.callPackage nix/tools/withTools.nix { inherit postgresqlVersions; };
+
+  # Changelog tools.
+  changelog =
+    pkgs.callPackage nix/tools/changelog { };
 }

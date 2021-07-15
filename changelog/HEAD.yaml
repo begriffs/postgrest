@@ -1,0 +1,972 @@
+
+_current: HEAD
+
+_previous: v7.0.1
+
+222a530:
+  author: steve-chavez
+  subject: Fix Dockerfile
+  type: other
+
+67344c8:
+  author: steve-chavez
+  subject: 'cabal: fix upload to hackage (#1532)'
+  refs:
+  - 1532
+  type: other
+
+289bb66:
+  author: monacoremo
+  subject: Reduce size of the static docker image by patching the Nix openssl package (#1528)
+  refs:
+  - 1528
+  type: other
+
+e6874c8:
+  author: monacoremo
+  subject: Fix UNKNOWN being shown as git commit hash (#1533)
+  refs:
+  - 1533
+  type: other
+
+48c9ac3:
+  author: monacoremo
+  subject: Bump nixpkgs and simplify/clean up nix setup (#1529)
+  refs:
+  - 1529
+  type: other
+
+3a1844e:
+  author: monacoremo
+  subject: Fix the static build (#1534)
+  refs:
+  - 1534
+  type: other
+
+d4aba5c:
+  author: steve-chavez
+  subject: Add notice about single Linux static executable
+  type: other
+
+08186ea:
+  author: monacoremo
+  subject: Nixify CircleCI setup (#1535)
+  refs:
+  - 1535
+  type: other
+
+784ebe5:
+  author:
+    name: Felix Yan
+  subject: Allow aeson 1.5 (#1537)
+  refs:
+  - 1537
+  type: other
+
+69b09e3:
+  author: monacoremo
+  subject: Nixify io and memory tests (#1538)
+  refs:
+  - 1538
+  type: other
+
+0f0d617:
+  author: steve-chavez
+  subject: Allow http status override through response.status guc (#1541)
+  refs:
+  - 1541
+  type: other
+
+8588a42:
+  author: steve-chavez
+  subject: Fix broken links in .github dir
+  type: other
+
+24064f8:
+  author: steve-chavez
+  subject: 'github: CHANGELOG reminder in PR template'
+  type: other
+
+43d71e9:
+  author: steve-chavez
+  subject: Allow schema cache reloading with NOTIFY (#1542)
+  refs:
+  - 1542
+  type: other
+
+a5bc293:
+  author: wolfgangwalther
+  subject: add test cases for singular minimal
+  type: other
+
+55b4f4f:
+  author: steve-chavez
+  subject: Fix expired JWTs starting an empty transaction
+  type: other
+
+343e41c:
+  author: wolfgangwalther
+  subject: Location header improvements(#1475)
+  refs:
+  - 1475
+  type: other
+
+896b79f:
+  author: steve-chavez
+  subject: 'refactor: separate reading file from parsing it'
+  type: other
+
+96a16a3:
+  author: steve-chavez
+  subject: 'refactor: move loadDbUriFile/SecretFile to Config'
+  type: other
+
+0ff05ed:
+  author: steve-chavez
+  subject: 'refactor: move parseSecret out of App.postgrest'
+  type: other
+
+e272ea4:
+  author: steve-chavez
+  subject: 'refactor: move logStdout/corsPolicy to Middleware'
+  type: other
+
+e8b4e37:
+  author: steve-chavez
+  subject: Allow config file reloading with SIGUSR2
+  type: other
+
+1f6a824:
+  author:
+    name: Remo
+  subject: Bump nixpkgs pin to unstable as of 2020-07-13
+  type: other
+
+6b2767d:
+  author: wolfgangwalther
+  subject: Additionally allow "bearer" instead of only "Bearer" in Authorization… (#1558)
+  refs:
+  - 1558
+  type: other
+
+'1898479':
+  author: steve-chavez
+  subject: Schema cache reload with zero downtime (#1559)
+  refs:
+  - 1559
+  type: other
+
+8e4687f:
+  author: wolfgangwalther
+  subject: Return 405 Method not Allowed for GET of volatile RPC instead of 500 (#1560)
+  refs:
+  - 1560
+  type: other
+
+a3f4548:
+  author: robx
+  subject: Allow base64-bytestring 1.2 and optparse-applicative 0.16
+  type: other
+
+bd2160d:
+  author: robx
+  subject: Make cabals bound more consistent
+  type: other
+
+7af54c5:
+  author: monacoremo
+  subject: Upgrade nixpkgs to current master and add an upgrade checklist (#1579)
+  refs:
+  - 1579
+  type: other
+
+807dae1:
+  author: robx
+  subject: Allow wai-extra 3.1
+  type: other
+
+17f04a8:
+  author:
+    name: Felix Yan
+  subject: Allow hspec-wai/hspec-wai-json 0.11 (#1595)
+  refs:
+  - 1595
+  type: other
+
+d395bb6:
+  author: wolfgangwalther
+  subject: Fix error messages on connection failure for postgres on localized Windows
+  type: other
+
+e4e84e5:
+  author: monacoremo
+  subject: Upgrade nixpkgs and add Postgres 13 support
+  type: other
+
+741f017:
+  author: monacoremo
+  subject: Use Postgres 13 in tests/docker-compose.yml
+  type: other
+
+60398ad:
+  author: robx
+  subject: Allow wai-middleware-static 0.9
+  type: other
+
+e9efcc7:
+  author: steve-chavez
+  subject: Add log-level config
+  type: other
+
+f6b6abe:
+  author: steve-chavez
+  subject: Add error log level
+  type: other
+
+d9a608d:
+  author: steve-chavez
+  subject: Add warn log level
+  type: other
+
+ccad9eb:
+  author: steve-chavez
+  subject: Change default log-level, from info to error
+  type: other
+
+99ecc7a:
+  author: wolfgangwalther
+  subject: Update stack.yaml.lock (#1616)
+  refs:
+  - 1616
+  type: other
+
+2eb8083:
+  author: monacoremo
+  subject: Simplify Nix CI jobs
+  type: other
+
+5bb670b:
+  author: wolfgangwalther
+  subject: fix appveyour build script
+  type: other
+
+f5331d1:
+  author: wolfgangwalther
+  subject: fix build error on windows
+  type: other
+
+b21a0f6:
+  author: wolfgangwalther
+  subject: fix travis build timeout swallowing error code
+  type: other
+
+29858b8:
+  author: wolfgangwalther
+  subject: improve cirrus build time by properly using cabal cache
+  type: other
+
+719c4ab:
+  author: wolfgangwalther
+  subject: Drop support for postgres 9.4
+  type: other
+
+5f33f01:
+  author: wolfgangwalther
+  subject: correct issue numbers in changelog
+  type: other
+
+'7809708':
+  author: wolfgangwalther
+  subject: 'ci: run spec tests against all pg versions, even if one of them fails (#1628)'
+  refs:
+  - 1628
+  type: other
+
+b7b66b6:
+  author: wolfgangwalther
+  subject: 'ci: remove io tests from stack-test because of random segmentation faults (#1627)'
+  refs:
+  - 1627
+  type: other
+
+7e3e19a:
+  author: steve-chavez
+  subject: 'refactor: untangle addFiltersOrdersRanges'
+  type: other
+
+d1d0c67:
+  author: steve-chavez
+  subject: 'perf: change Text queries to ByteString'
+  type: other
+
+eed0d3a:
+  author: wolfgangwalther
+  subject: 'ci: add coveralls.io integration'
+  type: other
+
+06e8535:
+  author: wolfgangwalther
+  subject: add tests to pass regular arrays properly to RPCs
+  type: other
+
+18cc214:
+  author: wolfgangwalther
+  subject: refactor moving findProc into ApiRequest to allow parsing parameters differently by proc
+  type: other
+
+302d4e1:
+  author: wolfgangwalther
+  subject: Allow calling variadic functions with repeated query params or JSON array in body
+  type: other
+
+04eaeec:
+  author: steve-chavez
+  subject: 'refactor: reorder PgVersion(95/96)Spec tests'
+  type: other
+
+a6696f3:
+  author: steve-chavez
+  subject: 'refactor: add Hasql arrayColumn decoder'
+  type: other
+
+2798ced:
+  author: steve-chavez
+  subject: Fix charset=utf-8 appending to binary output
+  type: other
+
+8618ffa:
+  author: steve-chavez
+  subject: 'perf: shortcut for proc with no variadic arg'
+  type: other
+
+4b4a622:
+  author: wolfgangwalther
+  subject: fix non-variadic repeated param in variadic function
+  type: other
+
+efc725f:
+  author: wolfgangwalther
+  subject: run stylish-haskell v0.12.1.0
+  type: other
+
+a7403fe:
+  author: wolfgangwalther
+  subject: 'refactor: split InsertSpec into InsertSpec and UpdateSpec'
+  type: other
+
+122fea1:
+  author: wolfgangwalther
+  subject: Add test to insert into a view and expect location header return
+  type: other
+
+9f8d1af:
+  author: steve-chavez
+  subject: 'nix: add postgrest-docker-login wrapper func'
+  type: other
+
+63849f1:
+  author: steve-chavez
+  subject: 'circleci: make release job a machine'
+  type: other
+
+139f9b9:
+  author: steve-chavez
+  subject: 'nix: fix postgrest-release-dockerhubdescription'
+  type: other
+
+5f3b581:
+  author: steve-chavez
+  subject: 'appveyor: add nightly release'
+  type: other
+
+8fd9a9a:
+  author: steve-chavez
+  subject: 'travisci: add nightly release'
+  type: other
+
+51b43f5:
+  author: steve-chavez
+  subject: 'nix: change release scripts to use a version arg'
+  type: other
+
+5d140f6:
+  author: steve-chavez
+  subject: 'circleci: add nightly release'
+  type: other
+
+814da05:
+  author: steve-chavez
+  subject: 'cirrusci: add nightly release'
+  type: other
+
+b6d8d89:
+  author: steve-chavez
+  subject: 'ci: add git sha with hours/minutes to nightly'
+  type: other
+
+'3830887':
+  author: steve-chavez
+  subject: 'ci: add nightly version to cabal file'
+  type: other
+
+ed8bf82:
+  author: steve-chavez
+  subject: Update BACKERS.md
+  type: other
+
+65968b5:
+  author: steve-chavez
+  subject: 'circleci: fix nightly release'
+  type: other
+
+6e04fe7:
+  author: wolfgangwalther
+  subject: Enable embedding through multiple layers of views recursively (#1625)
+  refs:
+  - 1625
+  type: other
+
+3f690ec:
+  author: goteguru
+  subject: Removing single column limit from join table M2M mapping detection. (#1593)
+  refs:
+  - 1593
+  type: other
+
+ca7ffd0:
+  author: wolfgangwalther
+  subject: Fix RPC return type handling for domains with composite base type
+  type: other
+
+b091586:
+  author: wolfgangwalther
+  subject: 'Refactor tests: renaming json table to prevent hiding of native json type'
+  type: other
+
+e08bb3a:
+  author: wolfgangwalther
+  subject: Fix overloading of functions with unnamed arguments (specifically for prefer params=single-object)
+  type: other
+
+2c52b96:
+  author: wolfgangwalther
+  subject: 'Refactor tests: replace str with json QuasiQuoter where appropriate'
+  type: other
+
+d91f47e:
+  author: wolfgangwalther
+  subject: Remove executable bit on .nix and .sql file
+  type: other
+
+944efb3:
+  author: wolfgangwalther
+  subject: Split StructureSpec into OpenApiSpec and OptionsSpec
+  type: other
+
+0d5520d:
+  author: yvmarques
+  subject: Update README.md
+  type: other
+
+698fac8:
+  author: wolfgangwalther
+  subject: 'Add test to ignore functions unnamed arguments for rpc disambiguation, resolves #1638'
+  refs:
+  - 1638
+  type: other
+
+dbf99c6:
+  author: wolfgangwalther
+  subject: Add support for Prefer tx=rollback
+  type: other
+
+'3425352':
+  author: wolfgangwalther
+  subject: Clean up postgrest --help output
+  type: other
+
+b13e95a:
+  author: wolfgangwalther
+  subject: Refactor tx-... config options to single tx-end option
+  type: other
+
+8e58b56:
+  author: steve-chavez
+  subject: 'refactor: Use hasql-dynamic on RPC/POST/PUT/PATCH'
+  type: other
+
+4bd5e6b:
+  author: steve-chavez
+  subject: 'perf: enable prepared statements for GET'
+  type: other
+
+787973f:
+  author: steve-chavez
+  subject: Add db-prepared-statements config
+  type: other
+
+9adec12:
+  author: steve-chavez
+  subject: 'cirrusci: add build timeout'
+  type: other
+
+07cb47e:
+  author: monacoremo
+  subject: Improve dev tools in the Nix environment (#1666)
+  refs:
+  - 1666
+  type: other
+
+f2cb917:
+  author: wolfgangwalther
+  subject: Use cabal v2-exec to run io tests, include io tests in nix-shell by default; remove obsolete ncat dependency (#1673)
+  refs:
+  - 1673
+  type: other
+
+1a5f6cc:
+  author: wolfgangwalther
+  subject: Add docker files to run nix dev environment on Windows
+  type: other
+
+de5742f:
+  author: wolfgangwalther
+  subject: Make nix the one and only dev environment; remove obsolete tooling
+  type: other
+
+10a70d4:
+  author: monacoremo
+  subject: add autocompletion for postgrest-watch
+  type: other
+
+609c9ae:
+  author: wolfgangwalther
+  subject: Make transaction-rollback=true the default for test-suite (#1663)
+  refs:
+  - 1663
+  type: other
+
+7d6d015:
+  author: wolfgangwalther
+  subject: improve error output for io-tests and with_tmp_db
+  type: other
+
+d218a9e:
+  author: wolfgangwalther
+  subject: 'dev: improve postgrest-watch experience'
+  type: other
+
+eb46cf2:
+  author: wolfgangwalther
+  subject: 'added: cli option --dump-config prints loaded config and exits'
+  type: other
+
+'8979442':
+  author: wolfgangwalther
+  subject: 'dev: add colors to io tests'
+  type: other
+
+ab33759:
+  author: wolfgangwalther
+  subject: 'ci: fix cirrus low memory error'
+  type: other
+
+ed58511:
+  author: wolfgangwalther
+  subject: 'feat: renamed config options with prefixes; added aliases for old names'
+  type: feat
+
+9254f11:
+  author: wolfgangwalther
+  subject: 'fix: implement robust parsing of boolean config values'
+  refs:
+  - 1572
+  type: fix
+
+7069bb3:
+  author: steve-chavez
+  subject: 'refactor: Change SET LOCAL gucs to set_config'
+  type: other
+
+11d62a8:
+  author: steve-chavez
+  subject: Prepared statement for set_config
+  type: other
+
+ebd474a:
+  author: steve-chavez
+  subject: 'fix: retry connection on failed schema cache load (#1685)'
+  refs:
+  - 1685
+  type: fix
+
+093fd3c:
+  author: wolfgangwalther
+  subject: 'fix: fix embedding through views with subqueries inside function calls'
+  refs:
+  - 1608
+  type: fix
+
+0c25f12:
+  author: wolfgangwalther
+  subject: 'fix: fix output of RPCs returning scalar values with multiple rows'
+  refs:
+  - 1584
+  type: breaking
+
+71fa879:
+  author: monacoremo
+  subject: Migrate io-tests from bash to pytest
+  type: other
+
+a52c114:
+  author: monacoremo
+  subject: add test for spec idempotence
+  type: other
+
+dbe3c16:
+  author: wolfgangwalther
+  subject: run spec tests in parallel
+  type: other
+
+fe09637:
+  author: monacoremo
+  subject: catch ReadTimeout in IO tests
+  type: other
+
+bf141ca:
+  author: monacoremo
+  subject: 'feat: Added --dump-schema CLI option to dump JSON of dbStructure schema cache.'
+  type: feat
+
+9cfc66a:
+  author: monacoremo
+  subject: upgrade nixpkgs and apply related fixes
+  type: other
+
+f2f639e:
+  author: monacoremo
+  subject: update stack to lts-16.26
+  type: other
+
+b7fc393:
+  author: wolfgangwalther
+  subject: 'feat: Read config directly from environment variables'
+  refs:
+  - 1624
+  type: feat
+
+add326a:
+  author: wolfgangwalther
+  subject: 'ci: skip postgrest-release-dockerhubdescription for nightly builds'
+  type: other
+
+69b459e:
+  author: wolfgangwalther
+  subject: Use environment variables for configuration in developer tooling
+  type: other
+
+2cbe1ba:
+  author: wolfgangwalther
+  subject: 'feat: Add --example cli option to show example config file'
+  type: feat
+
+56557c9:
+  author: wolfgangwalther
+  subject: 'ci: remove broken travis coverage job'
+  type: other
+
+b5185de:
+  author: wolfgangwalther
+  subject: 'nix: add "cd $rootdir" to all shell scripts via checked-shell-script'
+  type: other
+
+2425cdd:
+  author: monacoremo
+  subject: improve io-tests
+  type: other
+
+96478ed:
+  author: monacoremo
+  subject: Add docs to all checked shell scripts in nix
+  type: other
+
+8e02551:
+  author: wolfgangwalther
+  subject: Fix "unused-imports" warning for windows build
+  type: other
+
+'2015688':
+  author: wolfgangwalther
+  subject: Fix spec test concurrency issue related to tx=commit on simple_pk
+  type: other
+
+c7f0d42:
+  author: wolfgangwalther
+  subject: Add postgrest-coverage to show and upload hpc reports to codecov
+  type: other
+
+568477b:
+  author: wolfgangwalther
+  subject: Fix io tests not collecting coverage data when using run()
+  type: other
+
+'9354103':
+  author: wolfgangwalther
+  subject: Fix postgrest-coverage throwing error when installed with nix-env
+  type: other
+
+519550e:
+  author: wolfgangwalther
+  subject: Add codecov to README.md
+  type: other
+
+cc54135:
+  author: wolfgangwalther
+  subject: Rename master branch to main; replace whiteList with isAllowed
+  type: other
+
+af27884:
+  author: wolfgangwalther
+  subject: Add basic error handling to --dump-schema
+  type: other
+
+56a7bc5:
+  author: wolfgangwalther
+  subject: 'nix: Fix build errors with stale .tix files present'
+  type: other
+
+94b516d:
+  author: wolfgangwalther
+  subject: Add flag to postgrest.cabal to disable collecting coverage data
+  type: other
+
+eed6015:
+  author: wolfgangwalther
+  subject: 'refactor: Move addHasVariadic to SQL'
+  type: other
+
+6efa304:
+  author: wolfgangwalther
+  subject: 'refactor: Move parseArg to SQL'
+  type: other
+
+1edbef0:
+  author: wolfgangwalther
+  subject: Add STABLE RPCs in test fixtures to increase coverage
+  type: other
+
+45ebaf0:
+  author: wolfgangwalther
+  subject: 'cov: Add comment on SCHEMA in test fixtures'
+  type: other
+
+b8e6450:
+  author: wolfgangwalther
+  subject: 'refactor: simplify addXRels'
+  type: other
+
+d173b7d:
+  author: wolfgangwalther
+  subject: 'cov: remove unused fields from type Column'
+  type: other
+
+'5223082':
+  author: wolfgangwalther
+  subject: 'refactor: Combine relConstraint and relJunction in relLink'
+  type: other
+
+ab6f90a:
+  author: wolfgangwalther
+  subject: 'nix: Add postgrest-with-* tools to run with temporary databases of different versions'
+  type: other
+
+97d8456:
+  author: wolfgangwalther
+  subject: 'cov: Add io tests for basic cli commands and invalid config options'
+  type: other
+
+6dd1264:
+  author: wolfgangwalther
+  subject: 'cov: Remove unused code'
+  type: other
+
+ba86b47:
+  author: wolfgangwalther
+  subject: 'cov: refactor ApiRequest profile header detection'
+  type: other
+
+'1503955':
+  author: steve-chavez
+  subject: Correct openapi preparing statements by default
+  type: other
+
+'6746150':
+  author: steve-chavez
+  subject: Correct --dump-schema swallowing error
+  type: other
+
+9c005fc:
+  author: steve-chavez
+  subject: 'feat: get configuration parameters from the db'
+  type: feat
+
+125ea8f:
+  author: steve-chavez
+  subject: 'feat: allow reloading config with NOTIFY'
+  type: feat
+
+4344cc9:
+  author: steve-chavez
+  subject: 'refactor: use optString and move overrideFrom'
+  type: other
+
+17af56a:
+  author: steve-chavez
+  subject: 'refactor: config validation inside readAppConfig'
+  type: other
+
+6557f1f:
+  author: steve-chavez
+  subject: correct NOTIFY config reload dying on error
+  type: other
+
+c93e8f9:
+  author: steve-chavez
+  subject: Correct hardcoded postgrest_test_authenticator (#1743)
+  refs:
+  - 1743
+  type: other
+
+0ddd676:
+  author: monacoremo
+  subject: 'nix: Add a script to generate a graph of Haskell imports (#1751)'
+  refs:
+  - 1751
+  type: other
+
+e6973f9:
+  author: monacoremo
+  subject: 'refactor: App.hs and related changes (#1725)'
+  refs:
+  - 1725
+  type: other
+
+b50b674:
+  author: steve-chavez
+  subject: Update CYBERTEC logo and BACKERS
+  type: other
+
+a7dab6d:
+  author: robx
+  subject: 'cirrusci: update to FreeBSD 12.2'
+  type: other
+
+c3ccaf1:
+  author: robx
+  subject: Allow lens-5.0
+  type: other
+
+e4516ab:
+  author: steve-chavez
+  subject: Correct db settings to use "_" instead of "-"
+  type: other
+
+6750a5c:
+  author: steve-chavez
+  subject: Restrict db settings to current db and global
+  type: other
+
+498e772:
+  author: steve-chavez
+  subject: Reread in-db config when recoverying connection
+  type: other
+
+d3a8b5f:
+  author: steve-chavez
+  subject: Change db-load-guc-config to db-config
+  type: other
+
+5baec48:
+  author: robx
+  subject: 'circleci: update base image'
+  type: other
+
+3a466ae:
+  author: robx
+  subject: 'tests: don''t match JSON bodies literally'
+  type: other
+
+71f6061:
+  author: steve-chavez
+  subject: Add Supabase as a sponsor
+  type: other
+
+9f074ce:
+  author:
+    name: Boris Korzun
+  subject: 'cirrusci: update FreeBSD pkg'
+  type: other
+
+65e7f9e:
+  author: monacoremo
+  subject: 'nix: Add a tool for checking Haskell imports and exports (#1768)'
+  refs:
+  - 1768
+  type: other
+
+376beac:
+  author: wolfgangwalther
+  subject: update contributing guidelines
+  type: other
+
+9c79a41:
+  author: steve-chavez
+  subject: Add Contributor Covenant Code of Conduct v2
+  type: other
+
+7f11c1a:
+  author: laurenceisla
+  subject: 'fix: Void functions return null instead of empty body (#1795)'
+  refs:
+  - 1795
+  type: fix
+
+67f555d:
+  author:
+    name: Jérémy Pagé
+  subject: 'nix: Fix incorrect use of bash variable (#1797)'
+  refs:
+  - 1797
+  type: other
+
+a5372e4:
+  author: wolfgangwalther
+  subject: 'nix: show better error messages for missing arguments in hsie scripts (#1798)'
+  refs:
+  - 1798
+  type: other
+
+9118a4a:
+  author: wolfgangwalther
+  subject: 'fix random codecov/project drops in CI, resolves #1800'
+  refs:
+  - 1800
+  type: other
+
+8c44410:
+  author: monacoremo
+  subject: remove misleadingly named emptyOnFalse and similar (#1803)
+  refs:
+  - 1803
+  type: other
+
+f0e554d:
+  author: wolfgangwalther
+  subject: 'nix: Add postgrest-changelog-json tool to group commits by feat, fix and breaking categories'
+  type: other
+
+2ca55b2:
+  author: wolfgangwalther
+  subject: add intermediate yaml output and renderer
+  type: other
