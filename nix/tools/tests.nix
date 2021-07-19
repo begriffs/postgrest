@@ -24,7 +24,7 @@ let
         withEnv = postgrest.env;
       }
       ''
-        ${withTools.latest} ${cabal-install}/bin/cabal v2-test ${devCabalOptions}
+        ${withTools.pg} ${cabal-install}/bin/cabal v2-test ${devCabalOptions}
       '';
 
   testSpecIdempotence =
@@ -36,7 +36,7 @@ let
         withEnv = postgrest.env;
       }
       ''
-        ${withTools.latest} ${runtimeShell} -c " \
+        ${withTools.pg} ${runtimeShell} -c " \
           ${cabal-install}/bin/cabal v2-test ${devCabalOptions} && \
           ${cabal-install}/bin/cabal v2-test ${devCabalOptions}"
       '';
@@ -62,7 +62,7 @@ let
       }
       ''
         ${cabal-install}/bin/cabal v2-build ${devCabalOptions}
-        ${cabal-install}/bin/cabal v2-exec ${withTools.latest} \
+        ${cabal-install}/bin/cabal v2-exec ${withTools.pg} \
           ${ioTestPython}/bin/pytest -- -v test/io-tests "''${_arg_leftovers[@]}"
       '';
 
@@ -76,8 +76,8 @@ let
       }
       ''
         export PATH="${jq}/bin:$PATH"
-        
-        ${withTools.latest} \
+
+        ${withTools.pg} \
             ${cabal-install}/bin/cabal v2-run ${devCabalOptions} --verbose=0 -- \
             postgrest --dump-schema \
             | ${yq}/bin/yq -y .
@@ -106,11 +106,11 @@ let
 
         # collect all tests
         HPCTIXFILE="$tmpdir"/io.tix \
-        ${withTools.latest} ${cabal-install}/bin/cabal v2-exec ${devCabalOptions} \
+        ${withTools.pg} ${cabal-install}/bin/cabal v2-exec ${devCabalOptions} \
           ${ioTestPython}/bin/pytest -- -v test/io-tests
           
         HPCTIXFILE="$tmpdir"/spec.tix \
-        ${withTools.latest} ${cabal-install}/bin/cabal v2-test ${devCabalOptions}
+        ${withTools.pg} ${cabal-install}/bin/cabal v2-test ${devCabalOptions}
 
         # collect all the tix files
         ${ghc}/bin/hpc sum  --union --exclude=Paths_postgrest --output="$tmpdir"/tests.tix "$tmpdir"/io*.tix "$tmpdir"/spec.tix

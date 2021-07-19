@@ -27,6 +27,7 @@ let
     [
       postgrest.cabalTools
       postgrest.devTools
+      postgrest.loadtest
       postgrest.nixpkgsTools
       postgrest.style
       postgrest.tests
@@ -43,6 +44,7 @@ lib.overrideDerivation postgrest.env (
       base.buildInputs ++ [
         pkgs.cabal-install
         pkgs.cabal2nix
+        pkgs.git
         pkgs.postgresql
         postgrest.hsie.bin
       ]
@@ -51,6 +53,7 @@ lib.overrideDerivation postgrest.env (
     shellHook =
       ''
         source ${pkgs.bashCompletion}/etc/profile.d/bash_completion.sh
+        source ${pkgs.git}/share/git/contrib/completion/git-completion.bash
         source ${postgrest.hsie.bashCompletion}
 
       ''

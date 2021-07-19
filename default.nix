@@ -125,6 +125,10 @@ rec {
   docker =
     pkgs.callPackage nix/tools/docker { postgrest = postgrestStatic; };
 
+  # Load testing tools.
+  loadtest =
+    pkgs.callPackage nix/tools/loadtest.nix { inherit withTools; };
+
   # Script for running memory tests.
   memory =
     pkgs.callPackage nix/tools/memory.nix { inherit postgrestProfiled withTools; };
@@ -153,5 +157,5 @@ rec {
     };
 
   withTools =
-    pkgs.callPackage nix/tools/withTools.nix { inherit postgresqlVersions; };
+    pkgs.callPackage nix/tools/withTools.nix { inherit devCabalOptions postgresqlVersions postgrest; };
 }

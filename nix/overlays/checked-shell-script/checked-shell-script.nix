@@ -14,18 +14,17 @@
 { name
 , docs
 , args ? [ ]
-, addCommandCompletion ? false
+, positionalCompletion ? ""
 , inRootDir ? false
 , redirectTixFiles ? true
 , withEnv ? null
 , withTmpDir ? false
 }: text:
 let
+  # square brackets are a pain to escape - if even possible. just don't use them...
+  escape = str: builtins.replaceStrings [ "\n" ] [ " \\n" ] str;
+
   argsTemplate =
-    let
-      # square brackets are a pain to escape - if even possible. just don't use them...
-      escapedDocs = builtins.replaceStrings [ "\n" ] [ " \\n" ] docs;
-    in
     writeTextFile {
       inherit name;
       destination = "/${name}.m4"; # destination is needed to have the proper basename for completion
@@ -36,7 +35,7 @@ let
           # stripping the /nix/store/... path for nicer display
           BASH_ARGV0="$(basename "$0")"
 
-          # ARG_HELP([${name}], [${escapedDocs}])
+          # ARG_HELP([${name}], [${escape docs}])
           ${lib.strings.concatMapStrings (arg: "# " + arg) args}
           # ARG_POSITIONAL_DOUBLEDASH()
           # ARG_DEFAULTS_POS()
@@ -64,8 +63,8 @@ let
         ${argbash}/bin/argbash --type completion --strip all ${argsTemplate}/${name}.m4 > $out
       ''
 
-      + lib.optionalString addCommandCompletion ''
-        sed 's/COMPREPLY.*compgen -o bashdefault .*$/_command/' -i $out
+      + lib.optionalString (positionalCompletion != "") ''
+        sed 's#COMPREPLY.*compgen -o bashdefault .*$#${escape positionalCompletion}#' -i $out
       ''
     );
 

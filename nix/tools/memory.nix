@@ -18,7 +18,7 @@ let
       ''
         export PATH="${postgrestProfiled}/bin:${curl}/bin:$PATH"
 
-        ${withTools.latest} test/memory-tests.sh
+        ${withTools.pg} test/memory-tests.sh
       '';
 
 in

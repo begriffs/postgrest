@@ -1,0 +1,30 @@
+GET http://postgrest/
+Prefer: tx=commit
+
+HEAD http://postgrest/actors?actor=eq.1
+Prefer: tx=commit
+
+GET http://postgrest/actors?select=*,roles(*,films(*))
+Prefer: tx=commit
+
+POST http://postgrest/films?columns=title
+Prefer: tx=rollback
+@post.json
+
+PUT http://postgrest/actors?actor=eq.1&columns=name
+Prefer: tx=rollback
+@put.json
+
+PATCH http://postgrest/actors?actor=eq.1
+Prefer: tx=rollback
+@patch.json
+
+DELETE http://postgrest/roles
+Prefer: tx=rollback
+
+GET http://postgrest/rpc/call_me?name=John
+
+POST http://postgrest/rpc/call_me
+@rpc.json
+
+OPTIONS http://postgrest/actors
