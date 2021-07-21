@@ -1,27 +1,6 @@
 version: 2
 
 jobs:
-  # Make sure that there are no outstanding linting hints and that
-  # auto-formatting does not result in any changes.
-  style-check:
-    docker:
-      - image: nixos/nix:2.3
-    steps:
-      - checkout
-      - run:
-          name: Install linting and styling scripts
-          command: nix-env -f default.nix -iA style
-      - run:
-          name: Run linter
-          command: |
-            # Note: For checking this locally, use `nix-shell --run postgrest-lint`
-            postgrest-lint
-      - run:
-          name: Run style check
-          command: |
-            # 'Note: For checking this locally, use `nix-shell --run postgrest-style`
-            postgrest-style-check
-
   # Run tests based on stack and docker against the oldest PostgreSQL version
   # that we support.
   stack-test:
@@ -38,7 +17,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - v1-stack-dependencies-{{ checksum "postgrest.cabal" }}-{{ checksum "stack.yaml" }}
+          - v0-stack-dependencies-{{ checksum "postgrest.cabal" }}-{{ checksum "stack.yaml" }}
       - run:
           name: install stack & dependencies
           command: |
@@ -57,7 +36,7 @@ jobs:
           paths:
             - "~/.stack"
             - ".stack-work"
-          key: v1-stack-dependencies-{{ checksum "postgrest.cabal" }}-{{ checksum "stack.yaml" }}
+          key: v0-stack-dependencies-{{ checksum "postgrest.cabal" }}-{{ checksum "stack.yaml" }}
       - run:
           name: build src and tests
           command: |
@@ -117,7 +96,9 @@ jobs:
           path: /tmp/postgrest
 
   # Build everything in default.nix and push to the Cachix binary cache if running on main
-  nix-build:
+  # Also runs memory tests, because profiled dependencies have been built already
+  # Needs to run on a virtual machine, because PostgreSQL needs to run as non-root
+  nix-build-memory:
     machine: true
     steps:
       - checkout
@@ -158,35 +139,53 @@ jobs:
               echo "Building all derivations (caching skipped for outside pull requests)..."
               nix-build
             fi
+      - run:
+          name: Install test scripts
+          command: nix-env -f nix/default.nix -iA memory
+      - run:
+          name: Run memory tests
+          command: postgrest-test-memory
+          when: always
       - store_artifacts:
           path: /tmp/postgrest
 
   # Run tests
   nix-test:
-    machine: true
+    docker:
+      - image: technowledgy/nix:latest
     steps:
       - checkout
       - run:
-          name: Install Nix
-          command: |
-            curl -L https://nixos.org/nix/install | sh
-            echo "source $HOME/.nix-profile/etc/profile.d/nix.sh" >> $BASH_ENV
-      - run:
-          name: Install and use the Cachix binary cache
-          command: |
-            nix-env -iA cachix -f https://cachix.org/api/v1/install
-            cachix use postgrest
-      - run:
           name: Install testing scripts
-          command: nix-env -f default.nix -iA tests memory withTools
+          command: nix-env -f default.nix -iA cabalTools style tests withTools
+      - restore_cache:
+          keys:
+          - v2-cabal-{{ .Branch }}-{{ .Revision }}
+          - v2-cabal-{{ .Branch }}
+          - v2-cabal-main
+      - run:
+          name: Build postgrest
+          command: postgrest-build exe:postgrest lib:postgrest test:spec test:spec-querycost
+      - run:
+          name: Skip tests on build failure
+          command: circleci-agent step halt
+          when: on_fail
+      - save_cache:
+          paths:
+            - "./dist-newstyle"
+          key: v2-cabal-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Run style check
+          command: postgrest-style-check
+          when: always
+      - run:
+          name: Run linter
+          command: postgrest-lint
+          when: always
       - run:
           name: Run coverage (io tests and spec tests against PostgreSQL 13)
           command: postgrest-coverage
           when: always
-      - run:
-          name: Skip tests on build or primary test failure
-          command: circleci-agent step halt
-          when: on_fail
       - run:
           name: Upload coverage to codecov
           command: |
@@ -220,10 +219,6 @@ jobs:
           name: Check the spec tests for idempotence
           command: postgrest-test-spec-idempotence
           when: always
-      - run:
-          name: Run memory tests
-          command: postgrest-test-memory
-          when: always
       - store_artifacts:
           path: /tmp/postgrest
 
@@ -231,20 +226,13 @@ workflows:
   version: 2
   build-test-release:
     jobs:
-      - style-check:
-          # Make sure that this job also runs when releases are tagged.
-          filters:
-            tags:
-              only:
-                - /v[0-9]+(\.[0-9]+)*/
-                - nightly
       - stack-test:
           filters:
             tags:
               only:
                 - /v[0-9]+(\.[0-9]+)*/
                 - nightly
-      - nix-build:
+      - nix-build-memory:
           filters:
             tags:
               only:
@@ -260,9 +248,8 @@ workflows:
                 - nightly
       - release:
           requires:
-            - style-check
             - stack-test
-            - nix-build
+            - nix-build-memory
             - nix-test
           filters:
             tags:

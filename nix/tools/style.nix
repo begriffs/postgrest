@@ -1,6 +1,7 @@
 { black
 , buildToolbox
 , checkedShellScript
+, circleci-cli
 , git
 , hlint
 , nixpkgs-fmt
@@ -58,6 +59,9 @@ let
 
         # Lint bash scripts
         ${shellcheck}/bin/shellcheck test/create_test_db test/memory-tests.sh
+
+        # Validate circleci config
+        ${circleci-cli}/bin/circleci-cli config validate
       '';
 
 in
